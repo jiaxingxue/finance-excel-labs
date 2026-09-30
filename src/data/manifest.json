@@ -1,0 +1,118 @@
+{
+  "sourceSha256": "e20674d462f880873dc831813f4b155f4e69ef230e35e87ea8039a3442a56732",
+  "counts": {
+    "sheets": 15,
+    "cells": 1358,
+    "formulas": 668,
+    "assertions": 277,
+    "experiments": 12,
+    "exercises": 171
+  },
+  "lessons": [
+    {
+      "id": "part-0",
+      "kind": "part",
+      "n": null,
+      "title": "How This Workbook Is Organized",
+      "slug": "how-this-workbook-is-organized"
+    },
+    {
+      "id": "lab-01",
+      "kind": "lab",
+      "n": 1,
+      "title": "Data Foundation: Mapping Table and Long-Format Ledger",
+      "slug": "data-foundation-mapping-table-and-long-format-ledger"
+    },
+    {
+      "id": "lab-02",
+      "kind": "lab",
+      "n": 2,
+      "title": "Budget vs. Actual Variance Report",
+      "slug": "budget-vs-actual-variance-report"
+    },
+    {
+      "id": "lab-03",
+      "kind": "lab",
+      "n": 3,
+      "title": "Flux Analysis (Month-over-Month and Year-over-Year)",
+      "slug": "flux-analysis-month-over-month-and-year-over-year"
+    },
+    {
+      "id": "lab-04",
+      "kind": "lab",
+      "n": 4,
+      "title": "Price–Volume–Mix Analysis and Variance Bridge",
+      "slug": "price-volume-mix-analysis-and-variance-bridge"
+    },
+    {
+      "id": "lab-05",
+      "kind": "lab",
+      "n": 5,
+      "title": "Cost Rate/Volume Variances and the Flexible Budget",
+      "slug": "cost-rate-volume-variances-and-the-flexible-budget"
+    },
+    {
+      "id": "lab-06",
+      "kind": "lab",
+      "n": 6,
+      "title": "Pivot-Based Analysis",
+      "slug": "pivot-based-analysis"
+    },
+    {
+      "id": "lab-07",
+      "kind": "lab",
+      "n": 7,
+      "title": "Bank Reconciliation with Automated Matching",
+      "slug": "bank-reconciliation-with-automated-matching"
+    },
+    {
+      "id": "lab-08",
+      "kind": "lab",
+      "n": 8,
+      "title": "AR Aging, Allowance, and Subledger-to-GL Reconciliation",
+      "slug": "ar-aging-allowance-and-subledger-to-gl-reconciliation"
+    },
+    {
+      "id": "lab-09",
+      "kind": "lab",
+      "n": 9,
+      "title": "Forecasting: Moving Average, Trend, Seasonality, Backtest",
+      "slug": "forecasting-moving-average-trend-seasonality-backtest"
+    },
+    {
+      "id": "lab-10",
+      "kind": "lab",
+      "n": 10,
+      "title": "Driver-Based Forecast, Scenarios, and Sensitivity",
+      "slug": "driver-based-forecast-scenarios-and-sensitivity"
+    },
+    {
+      "id": "lab-11",
+      "kind": "lab",
+      "n": 11,
+      "title": "Reusable LAMBDA Function Library (Microsoft 365)",
+      "slug": "reusable-lambda-function-library-microsoft-365"
+    },
+    {
+      "id": "lab-12",
+      "kind": "lab",
+      "n": 12,
+      "title": "Model Integrity Checks Dashboard",
+      "slug": "model-integrity-checks-dashboard"
+    },
+    {
+      "id": "appendix-a",
+      "kind": "appendix",
+      "n": null,
+      "title": "Function Tiers and Fallback Formulas",
+      "slug": "function-tiers-and-fallback-formulas"
+    },
+    {
+      "id": "appendix-b",
+      "kind": "appendix",
+      "n": null,
+      "title": "Web App Blueprint",
+      "slug": "web-app-blueprint"
+    }
+  ]
+}

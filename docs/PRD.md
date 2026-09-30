@@ -1,7 +1,7 @@
 # PRD — "Excel Labs for Financial Analysis" Interactive Web App
 
 **Document type:** Product Requirements Document, written for implementation by **Claude Code**
-**Version:** 1.2 · September 29, 2026 (v1.1 added Section 17, public deployment and portfolio; v1.2 records the owner's decisions: GPLv3, repo `finance-excel-labs`)
+**Version:** 1.3 · September 29, 2026 (v1.1 added Section 17, public deployment and portfolio; v1.2 records the owner's decisions: GPLv3, repo `finance-excel-labs`; v1.3 applies the Milestone 0 resolutions, see the [change log](#change-log))
 **Owner:** repository owner ([@jiaxingxue](https://github.com/jiaxingxue))
 **Repository:** `jiaxingxue/finance-excel-labs` · **Live site (after first deploy):** https://jiaxingxue.github.io/finance-excel-labs/
 **Source content:** `Excel_Implementation_Labs_Financial_Analysis.md` (the "Labs document")
@@ -83,10 +83,14 @@ Place the Labs document at `content/Excel_Implementation_Labs_Financial_Analysis
 | Output file | Extracted from | Rule |
 |---|---|---|
 | `src/data/workbook.json` | Appendix C | Each `#### Sheet \`NAME\` (N cells)` heading is followed by one fenced ```` ```json ```` block, an object mapping A1 address → cell. Build `{ sheetOrder: [...headings in order], sheets: { NAME: {...} } }`. Validate that each sheet's cell count equals N. |
-| `src/data/assertions.json` | Appendix D | The single fenced JSON array. Validate count = 277. |
-| `src/data/experiments.json` | Appendix E | The single fenced JSON array. Validate count = 12. |
+| `src/data/assertions.json` | Appendix D | The single fenced JSON array **within the Appendix D section** (other sections, such as Appendix B.2, contain JSON examples that must not match). Validate count = 277. |
+| `src/data/experiments.json` | Appendix E | The single fenced JSON array **within the Appendix E section**. Validate count = 12. |
 | `src/data/lessons/*.json` | Part 0, Labs 1–12, Appendices A–B | Split at `## ` headings. Each lab is identified by `## Lab N — Title`. Store the title, slug, and raw markdown. |
-| `src/data/exercises.json` | Formula tables in each lab | Every markdown table row matching `` | `SHEET!ADDR` | `=FORMULA` | RESULT | `` marks `SHEET!ADDR` as a **pattern cell** of that lab (used by Build mode, Section 6.3). |
+| `src/data/exercises.json` | Formula tables in each lab | Every markdown table row matching `` | `SHEET!ADDR` | `=FORMULA` | RESULT | `` marks `SHEET!ADDR` as a **pattern cell** of that lab (used by Build mode, Section 6.3). Validate that each formula equals the Appendix C formula for that cell. |
+| `src/data/notice.json` | Blockquote before the Table of Contents | The verification notice, verbatim (LS-4). |
+| `src/data/manifest.json` | All of the above | Counts, the lesson index (id, title, slug), and a SHA-256 of the Labs document. |
+
+`src/data/` is **entirely generated**: `npm run extract` deletes and rewrites it, and `npm run extract -- --check` fails on any missing, stale, or extra file. Hand-authored configuration lives in `src/config/`.
 
 ### 4.3 Cell format (from Appendix C)
 ```ts
@@ -95,7 +99,7 @@ type CellSpec =
   | { v: { date: string }; fmt?: string }             // date "YYYY-MM-DD"
   | { f: string; fmt?: string };                      // formula, starts with "="
 ```
-- **Dates** → Excel serial number using the 1900 date system (serial = days since 1899-12-30). The engine must use the same epoch.
+- **Dates** → Excel serial number using the 1900 date system (serial = days since 1899-12-30). The engine must use the same epoch. `workbook.json` keeps dates as `{ "date": "YYYY-MM-DD" }` exactly as in Appendix C (so it deep-equals `reference/golden/spec.json`); the conversion to a serial happens when the engine adapter loads the workbook.
 - **`fmt`** is an Excel number-format code. Display with an Excel-format library such as SheetJS **SSF** (`ssf` on npm), not hand-written formatting.
 - Blank cells are absent from the JSON.
 
@@ -108,10 +112,12 @@ interface Assertion { sheet: string; cell: string; expected: number | string | b
 
 interface Experiment {
   id: string; lab: number; title: string;
-  changes: Record<string /* "Sheet!A1" */, number | string>;  // date strings "YYYY-MM-DD" → serial
+  changes: Record<string /* "Sheet!A1" */, number | string>;  // only a full "YYYY-MM-DD" string → serial;
+                                                              // other strings (e.g. text period "2026-07") stay text
   expect: Record<string /* "Sheet!A1" */, number | string | boolean | null>;
 }
 // Experiment numbers use tolerance 1e-6 relative, or 0.005 absolute (whichever is larger).
+// expect null = the cell is empty: it passes when the cell evaluates to an empty value or "".
 ```
 
 ### 4.5 Lab → sheet → assertion mapping
@@ -132,7 +138,7 @@ Assertions belong to the lab that owns their sheet:
 | 11 | LAMBDA library | (lesson + simulated functions sandbox) | — |
 | 12 | Checks dashboard | Checks | Checks |
 
-Store this mapping as `src/data/labs.config.ts`. It is hand-authored because it's editorial, but validate it at build time: every sheet in `workbook.json` must appear in at least one lab.
+Store this mapping as `src/config/labs.config.ts` (outside the generated `src/data/`). It is hand-authored because it's editorial, but validate it at build time: every sheet in `workbook.json` must appear in at least one lab.
 
 ---
 
@@ -391,9 +397,9 @@ Lab 11's workspace is a sandbox sheet where the learner calls these functions ag
 ├─ content/Excel_Implementation_Labs_Financial_Analysis.md
 ├─ scripts/extract-content.ts          # Section 4 pipeline (npm run extract)
 ├─ src/
-│  ├─ data/                            # generated: workbook.json, assertions.json, experiments.json,
-│  │                                   #            exercises.json, lessons/*.json
-│  ├─ data/labs.config.ts              # hand-authored: sheets, fills, controls, CF rules, charts
+│  ├─ data/                            # generated only: workbook.json, assertions.json, experiments.json,
+│  │                                   #   exercises.json, notice.json, manifest.json, lessons/*.json
+│  ├─ config/labs.config.ts            # hand-authored: sheets, fills, controls, CF rules, charts
 │  ├─ engine/
 │  │  ├─ FormulaEngine.ts              # interface
 │  │  ├─ HyperFormulaEngine.ts         # adapter
@@ -577,7 +583,7 @@ Owner answers are recorded in **`docs/DECISIONS.md`**, which overrides this tabl
 ### 17.3 Build configuration for a sub-path site
 | Concern | Requirement |
 |---|---|
-| Base path | `vite.config.ts`: `base: process.env.BASE_PATH ?? '/'`. The workflow sets `BASE_PATH=/${{ github.event.repository.name }}/` |
+| Base path | `vite.config.ts`: `base: process.env.BASE_PATH ?? '/'`. The workflow sets `BASE_PATH=/${{ github.event.repository.name }}/`. Locally, use `npm run build:pages` (sets `BASE_PATH=/finance-excel-labs/` through `cross-env`), never an inline `BASE_PATH=… npm run build`: that syntax fails in PowerShell, and Git Bash rewrites `/finance-excel-labs/` into a Windows path |
 | Routing | **Hash routing** (`/#/lab/7`), so deep links survive refreshes on a static host with no rewrite rules. Also copy `index.html` → `404.html` at build time as a safety net |
 | Asset URLs | Every runtime fetch of data files uses `import.meta.env.BASE_URL` as the prefix, never a leading `/` |
 | Service worker | Register at `${import.meta.env.BASE_URL}sw.js` with scope = `BASE_URL`. Precache the app shell and `src/data/*`. Use a versioned cache name with the commit SHA, and show a "New version available — reload" toast on update |
@@ -585,7 +591,7 @@ Owner answers are recorded in **`docs/DECISIONS.md`**, which overrides this tabl
 | Build metadata | Inject `VITE_COMMIT_SHA`, `VITE_BUILD_DATE`, and `VITE_APP_VERSION` at build time; show them on `/about` and `/verification` |
 
 ### 17.4 CI/CD workflow (`.github/workflows/deploy.yml`)
-Use the current major versions of the official actions at implementation time. The versions below match GitHub's documentation as of September 2026; verify before committing.
+Use the current major versions of the official actions at implementation time. The versions below were verified against each action’s latest release on 2026-09-29. Node comes from `.nvmrc` (Node 24; `package.json` has `engines.node: ">=24"`).
 
 ```yaml
 name: CI and Deploy
@@ -596,14 +602,14 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Least privilege by default; only the deploy job can write to Pages (OPEN_ISSUES #5).
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  # Superseded PR runs are cancelled; a deploy on main is never interrupted mid-flight.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   ci:
@@ -612,32 +618,35 @@ jobs:
       BASE_PATH: /${{ github.event.repository.name }}/
       VITE_COMMIT_SHA: ${{ github.sha }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - name: Content is in sync with the Labs document
-        run: npm run extract -- --check          # fails if generated data differs from committed data
+        run: npm run extract -- --check
+      - name: Third-party notices are in sync with package-lock.json
+        run: npm run notices -- --check
       - run: npm run lint
+      - run: npm run format:check
       - run: npm run typecheck
-      - name: Unit + conformance tests (277 assertions, 12 experiments)
+      - name: Unit + golden cross-check tests
         run: npm test -- --reporter=default --reporter=json --outputFile=reports/vitest.json
-      - name: Write verification.json for the site
-        run: npm run verification:write          # reads reports/vitest.json → public/verification.json
+      # M1 adds: npm run verification:write (reports/vitest.json → public/verification.json)
       - run: npm run build
       - run: npx playwright install --with-deps chromium
-      - name: E2E + accessibility tests against the production build
-        run: npm run test:e2e                     # serves dist/ under BASE_PATH via vite preview
-      - uses: actions/upload-artifact@v4
+      - name: E2E tests against the production build under BASE_PATH
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-reports
           path: reports/
+          if-no-files-found: ignore
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
@@ -645,17 +654,23 @@ jobs:
     needs: ci
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 ```
 Rules:
 - **Deploy only if every test passes.** A failing conformance test must block publishing.
 - Playwright e2e tests run against the **built** site served under `BASE_PATH`, to catch sub-path bugs before they reach production.
+- **Least privilege:** the workflow default is `contents: read`; only the `deploy` job gets `pages: write` and `id-token: write`, so pull-request runs never hold Pages credentials.
+- **Concurrency:** superseded pull-request runs are cancelled, but a run on `main` is never cancelled, so a Pages deployment is never interrupted mid-flight.
+- The `verification:write` step (Section 17.5) is added in M1, when conformance results exist.
 - Add `npm run smoke:prod`: a scheduled workflow (weekly, plus manual) that loads the live URL, opens Lab 2, and confirms the checks are green. It alerts through a failed run if the public site breaks.
 
 ### 17.5 Verification artifact and page
@@ -814,3 +829,13 @@ Claude Code creates this file with these headings and fills them from the finish
 - IronCalc: [GitHub](https://github.com/ironcalc/IronCalc), [website](https://www.ironcalc.com/)
 - GitHub Pages / Actions: [Pages documentation](https://docs.github.com/pages), [Using custom workflows with GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 - Vite: [Deploying a static site](https://vite.dev/guide/static-deploy)
+
+---
+
+## Change log
+
+| Version | Date | Change |
+|---|---|---|
+| 1.1 | 2026-09-29 | Added Section 17 (public deployment and portfolio) |
+| 1.2 | 2026-09-29 | Recorded the owner's decisions: GPLv3, repo `finance-excel-labs` |
+| 1.3 | 2026-09-29 | Milestone 0 resolutions accepted by the owner (details in `docs/OPEN_ISSUES.md` #1–#12): hand-authored config moves to `src/config/labs.config.ts` and `src/data/` becomes generated-only, with `notice.json` and `manifest.json` added (§4.2, §4.5, §9.2); `workbook.json` keeps `{date}` values, converted to serials at engine load (§4.3); experiment `changes` convert only full `YYYY-MM-DD` strings, and `expect: null` means empty (§4.4); Appendix D/E JSON extraction is scoped to its own section (§4.2); local sub-path builds use `npm run build:pages` via `cross-env` (§17.3); the workflow uses Node 24 from `.nvmrc`, current action majors, job-scoped Pages permissions, and never cancels a `main` deploy (§17.4) |

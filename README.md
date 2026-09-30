@@ -17,12 +17,39 @@ Interactive, auto-graded Excel labs for FP&A and accounting: budget vs. actual, 
 - **A deploy gate:** CI will block deployment unless every one of them is reproduced.
 - **Grading checks results, not formula text,** and re-tests answers under changed inputs to reject hard-coding.
 
+## Run locally
+Requires **Node 24** (see `.nvmrc`). Commands work the same in PowerShell, cmd, and bash.
+
+```
+npm ci
+npm run dev              # dev server at http://localhost:5173/
+npm run check            # lint + typecheck + unit tests
+```
+
+| Task | Command |
+|---|---|
+| Regenerate data from the Labs document | `npm run extract` (`npm run extract -- --check` verifies it is current) |
+| Unit tests + golden cross-check | `npm test` |
+| Build as deployed on GitHub Pages | `npm run build:pages` (base path `/finance-excel-labs/`) |
+| Preview that build | `npm run preview:pages` → http://localhost:4173/finance-excel-labs/ |
+| End-to-end tests | `npx playwright install chromium` (once), then `npm run build:pages` and `npm run test:e2e` |
+| Format | `npm run format` / `npm run format:check` |
+| Third-party notices | `npm run notices` (after any dependency change) |
+
+How content flows from the Labs document into the app: [docs/CONTENT_PIPELINE.md](docs/CONTENT_PIPELINE.md).
+
+## Deploy
+Every push to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml): content sync check, lint, format, typecheck, unit tests, build, and end-to-end tests. The site is published to GitHub Pages **only if all of them pass**. Pull requests run the same checks without deploying.
+
+One-time setup (owner): repository **Settings → Pages → Build and deployment → Source → GitHub Actions**.
+
 ## Project docs
 - [Product requirements](docs/PRD.md)
 - [Lab content (source of truth)](content/Excel_Implementation_Labs_Financial_Analysis.md)
 - [Golden reference data](reference/README.md)
+- [Owner decisions](docs/DECISIONS.md) · [Open issues](docs/OPEN_ISSUES.md) · [Milestone notes](docs/milestones/)
 
 ## License
-GPLv3 (license file added in the first milestone).
+GPLv3, for both the code and the lesson content. See [LICENSE](LICENSE) and [third-party notices](THIRD_PARTY_NOTICES.md).
 
 <!-- Claude Code: replace this file with the full README template in PRD §17.6 during Milestone 7. -->
