@@ -20,7 +20,7 @@ Interactive, auto-graded Excel labs for FP&A and accounting, running an Excel-co
 
 ## Workflow
 - One branch per milestone (`m0-scaffold`, `m1-engine`, …). Small commits with clear messages.
-- Before every commit: `npm run lint && npm run typecheck && npm test`. Before merging a milestone: run `/verify`.
+- Before every commit: `npm run check` (= `npm run lint && npm run typecheck && npm test`). Before merging a milestone: run `/verify`.
 - End each milestone by writing `docs/milestones/M<n>.md` (what works, what's left, known issues) and pausing for the owner's review.
 - When blocked by an owner decision, add it to `docs/OPEN_ISSUES.md`, choose the documented default if one exists, and say so. Otherwise stop and ask.
 - Prefer small, readable modules. TypeScript strict mode. No new runtime dependency without noting its license in `THIRD_PARTY_NOTICES.md`.
@@ -29,18 +29,25 @@ Interactive, auto-graded Excel labs for FP&A and accounting, running an Excel-co
 <!-- Claude Code: fill these in during M0 and keep them current. -->
 | Task | Command |
 |---|---|
-| Install | `npm ci` |
+| Install | `npm ci` (Node 24, see `.nvmrc`; `.npmrc` sets `engine-strict`) |
 | Extract content | `npm run extract` (`-- --check` fails if the output is stale) |
 | Dev server | `npm run dev` |
 | Unit + conformance tests | `npm test` |
-| E2E tests | `npm run test:e2e` |
-| Lint / types | `npm run lint` / `npm run typecheck` |
-| Production build | `npm run build` (set `BASE_PATH=/finance-excel-labs/` to mimic Pages) |
+| Pre-commit gate | `npm run check` (lint + typecheck + test; works in any shell) |
+| E2E tests | `npm run build:pages` then `npm run test:e2e` (one-time: `npx playwright install chromium`) |
+| Lint / types / format | `npm run lint` / `npm run typecheck` / `npm run format:check` |
+| Production build | `npm run build` (base `/`) or `npm run build:pages` (base `/finance-excel-labs/`, mimics Pages) |
+| Third-party notices | `npm run notices` (`-- --check` fails if stale); run after any dependency change |
+
+The owner uses PowerShell on Windows; CI runs on Linux. Put any environment variable in an npm script with `cross-env`, never inline (`BASE_PATH=… npm run build`). The inline form fails in PowerShell, and Git Bash rewrites `/finance-excel-labs/` to `C:/Program Files/Git/finance-excel-labs/`.
 
 ## Project map
 <!-- Claude Code: update as the structure is created (PRD §9.2). -->
 - `content/` source Labs document · `reference/golden/` verified data (read-only) · `reference/generator/` scripts that produced it (provenance only; do not run in CI)
-- `src/engine/` formula engine adapter + plugins · `src/grading/` · `src/components/` · `src/data/` (generated)
+- `scripts/extract-content.ts` + `scripts/extract/` content pipeline · `scripts/generate-notices.ts`
+- `src/data/` (generated only; never edit) · `src/config/labs.config.ts` (hand-authored lab config) · `src/content/types.ts` (data shapes)
+- `src/engine/` formula engine adapter + plugins · `src/grading/` · `src/components/` · `src/routes/` · `src/styles/` (CSS tokens; components use CSS Modules)
+- `tests/*.test.ts` (Vitest) · `tests/e2e/*.spec.ts` (Playwright, against the built site under `/finance-excel-labs/`)
 
 ## Lessons learned
 <!-- Add a one-line rule here whenever the same mistake happens twice. -->

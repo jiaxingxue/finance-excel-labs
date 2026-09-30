@@ -9,7 +9,7 @@ Steps, in order:
 2. Cross-check the generated data against `reference/golden/`: 15 sheets whose cells deep-equal `spec.json`, 277 assertions, 12 experiments. Report any difference.
 3. `npm run lint` and `npm run typecheck`.
 4. `npm test`: report the conformance numbers explicitly as "assertions X/277, experiments Y/12", plus the total unit-test count.
-5. `BASE_PATH=/finance-excel-labs/ npm run build`: report bundle sizes and flag the initial JS if it exceeds 600 KB gzipped (PRD §8).
+5. `npm run build:pages` (builds with `BASE_PATH=/finance-excel-labs/` via cross-env; works in PowerShell and Git Bash): report bundle sizes and flag the initial JS if it exceeds 600 KB gzipped (PRD §8).
 6. `npm run test:e2e` (only if steps 1–5 pass).
 
 Finish with a summary table (step, status, key numbers). Then state which acceptance criteria from PRD §11 are now met for the current milestone and which remain.
