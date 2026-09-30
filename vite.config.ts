@@ -42,6 +42,11 @@ export default defineConfig({
     ),
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(pkg.version),
   },
+  build: {
+    // The lazily loaded engine chunk (HyperFormula + plugins, ~820 kB raw / ~175 kB gzipped) is
+    // over Vite's default 500 kB warning. It never blocks the first paint (PRD §8).
+    chunkSizeWarningLimit: 1000,
+  },
   test: {
     include: ['tests/**/*.test.ts'],
   },

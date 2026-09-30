@@ -27,6 +27,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "screenshots:m2": "cross-env SCREENSHOTS=1 playwright test screenshots",
     "check": "npm run lint && npm run typecheck && npm test",
     "notices": "node scripts/generate-notices.ts",
     "verification:write": "node scripts/write-verification.ts"
@@ -35,10 +36,13 @@
     "hyperformula": "^3.4.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "react-markdown": "^10.1.0",
     "react-router": "^8.4.0",
+    "remark-gfm": "^4.0.1",
     "ssf": "^0.11.2"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
     "@types/node": "^24.19.0",
