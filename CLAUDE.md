@@ -35,7 +35,7 @@ Interactive, auto-graded Excel labs for FP&A and accounting, running an Excel-co
 | Unit + conformance tests | `npm test` |
 | Pre-commit gate | `npm run check` (lint + typecheck + test; works in any shell) |
 | E2E tests | `npm run build:pages` then `npm run test:e2e` (one-time: `npx playwright install chromium`) |
-| Milestone screenshots | `npm run build:pages` then `npm run screenshots:m2` (writes `docs/milestones/m2/`) |
+| Milestone screenshots | `npm run build:pages` then `npm run screenshots:m2` or `screenshots:m3` (writes `docs/milestones/m2/` or `m3/`) |
 | Lint / types / format | `npm run lint` / `npm run typecheck` / `npm run format:check` |
 | Production build | `npm run build` (base `/`) or `npm run build:pages` (base `/finance-excel-labs/`, mimics Pages) |
 | Third-party notices | `npm run notices` (`-- --check` fails if stale); run after any dependency change |

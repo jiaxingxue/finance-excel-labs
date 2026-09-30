@@ -27,7 +27,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "screenshots:m2": "cross-env SCREENSHOTS=1 playwright test screenshots",
+    "screenshots:m2": "cross-env SCREENSHOTS=1 playwright test tests/e2e/screenshots.spec.ts",
+    "screenshots:m3": "cross-env SCREENSHOTS=1 playwright test tests/e2e/m3-screenshots.spec.ts",
     "check": "npm run lint && npm run typecheck && npm test",
     "notices": "node scripts/generate-notices.ts",
     "verification:write": "node scripts/write-verification.ts"
