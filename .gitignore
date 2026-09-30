@@ -1,0 +1,28 @@
+# dependencies and builds
+node_modules/
+dist/
+coverage/
+reports/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# env and secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Claude Code local-only settings
+.claude/settings.local.json
+
+# Optional: keep private setup notes off GitHub (remove the leading "# " to enable).
+# Do this BEFORE the first commit; files already committed stay in the git history.
+START_HERE.md
+docs/DECISIONS.md

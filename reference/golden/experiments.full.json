@@ -1,0 +1,496 @@
+[
+ {
+  "id": "E2.1",
+  "lab": 2,
+  "title": "Lower the % threshold to 3%",
+  "changes": {
+   "BvA!B2": 0.03
+  },
+  "watch": [
+   "BvA!H6",
+   "BvA!H7",
+   "BvA!H8",
+   "BvA!H9",
+   "BvA!H10",
+   "BvA!H11",
+   "BvA!H12"
+  ],
+  "results": [
+   {
+    "cell": "BvA!H6",
+    "before": true,
+    "after": true
+   },
+   {
+    "cell": "BvA!H7",
+    "before": false,
+    "after": true
+   },
+   {
+    "cell": "BvA!H8",
+    "before": false,
+    "after": false
+   },
+   {
+    "cell": "BvA!H9",
+    "before": true,
+    "after": true
+   },
+   {
+    "cell": "BvA!H10",
+    "before": false,
+    "after": false
+   },
+   {
+    "cell": "BvA!H11",
+    "before": false,
+    "after": false
+   },
+   {
+    "cell": "BvA!H12",
+    "before": true,
+    "after": true
+   }
+  ]
+ },
+ {
+  "id": "E2.2",
+  "lab": 2,
+  "title": "Switch the report period to 2026-07 (no budget loaded)",
+  "changes": {
+   "BvA!B1": "2026-07"
+  },
+  "watch": [
+   "BvA!C6",
+   "BvA!D6",
+   "BvA!F6",
+   "BvA!G6",
+   "BvA!H6",
+   "BvA!D14"
+  ],
+  "results": [
+   {
+    "cell": "BvA!C6",
+    "before": 500000,
+    "after": 0
+   },
+   {
+    "cell": "BvA!D6",
+    "before": 468000,
+    "after": 455000
+   },
+   {
+    "cell": "BvA!F6",
+    "before": -0.064,
+    "after": "n/a"
+   },
+   {
+    "cell": "BvA!G6",
+    "before": "Unfavorable",
+    "after": "Favorable"
+   },
+   {
+    "cell": "BvA!H6",
+    "before": true,
+    "after": false
+   },
+   {
+    "cell": "BvA!D14",
+    "before": 0,
+    "after": 0
+   }
+  ]
+ },
+ {
+  "id": "E3.1",
+  "lab": 3,
+  "title": "Raise the flux % threshold to 20%",
+  "changes": {
+   "Flux!B4": 0.2
+  },
+  "watch": [
+   "Flux!I8",
+   "Flux!I9",
+   "Flux!I10",
+   "Flux!I11",
+   "Flux!I12",
+   "Flux!I13"
+  ],
+  "results": [
+   {
+    "cell": "Flux!I8",
+    "before": null,
+    "after": null
+   },
+   {
+    "cell": "Flux!I9",
+    "before": null,
+    "after": null
+   },
+   {
+    "cell": "Flux!I10",
+    "before": "Explain",
+    "after": null
+   },
+   {
+    "cell": "Flux!I11",
+    "before": "Explain",
+    "after": "Explain"
+   },
+   {
+    "cell": "Flux!I12",
+    "before": null,
+    "after": null
+   },
+   {
+    "cell": "Flux!I13",
+    "before": null,
+    "after": null
+   }
+  ]
+ },
+ {
+  "id": "E4.1",
+  "lab": 4,
+  "title": "Pro sells at budget price (E6 = 120)",
+  "changes": {
+   "PVM!E6": 120
+  },
+  "watch": [
+   "PVM!J8",
+   "PVM!K8",
+   "PVM!L8",
+   "PVM!M8",
+   "PVM!N8"
+  ],
+  "results": [
+   {
+    "cell": "PVM!J8",
+    "before": 600,
+    "after": 3600
+   },
+   {
+    "cell": "PVM!K8",
+    "before": -937.5,
+    "after": -937.5
+   },
+   {
+    "cell": "PVM!L8",
+    "before": 3937.5,
+    "after": 3937.5
+   },
+   {
+    "cell": "PVM!M8",
+    "before": 3600,
+    "after": 6600
+   },
+   {
+    "cell": "PVM!N8",
+    "before": 0,
+    "after": 0
+   }
+  ]
+ },
+ {
+  "id": "E4.2",
+  "lab": 4,
+  "title": "Same total units, budget mix (D5=994, D6=497, D7=99)",
+  "changes": {
+   "PVM!D5": 994,
+   "PVM!D6": 497,
+   "PVM!D7": 99
+  },
+  "watch": [
+   "PVM!K8",
+   "PVM!L8",
+   "PVM!N8"
+  ],
+  "results": [
+   {
+    "cell": "PVM!K8",
+    "before": -937.5,
+    "after": -937.5
+   },
+   {
+    "cell": "PVM!L8",
+    "before": 3937.5,
+    "after": -122.5
+   },
+   {
+    "cell": "PVM!N8",
+    "before": 0,
+    "after": 0
+   }
+  ]
+ },
+ {
+  "id": "E5.1",
+  "lab": 5,
+  "title": "Negotiate freight rate down to 11.50",
+  "changes": {
+   "CostVar!B6": 11.5
+  },
+  "watch": [
+   "CostVar!B10",
+   "CostVar!C10",
+   "CostVar!B12",
+   "CostVar!C12"
+  ],
+  "results": [
+   {
+    "cell": "CostVar!B10",
+    "before": 1150,
+    "after": -1150
+   },
+   {
+    "cell": "CostVar!C10",
+    "before": "Unfavorable",
+    "after": "Favorable"
+   },
+   {
+    "cell": "CostVar!B12",
+    "before": 4750,
+    "after": 2450
+   },
+   {
+    "cell": "CostVar!C12",
+    "before": "Unfavorable",
+    "after": "Unfavorable"
+   }
+  ]
+ },
+ {
+  "id": "E7.1",
+  "lab": 7,
+  "title": "Tighten amount tolerance to 1.00",
+  "changes": {
+   "BankRec!B2": 1
+  },
+  "watch": [
+   "Book!E4",
+   "Bank!E4",
+   "BankRec!B10",
+   "BankRec!B15",
+   "BankRec!B16",
+   "BankRec!B12",
+   "BankRec!B17",
+   "BankRec!B19"
+  ],
+  "results": [
+   {
+    "cell": "Book!E4",
+    "before": "Tolerance",
+    "after": "Unmatched"
+   },
+   {
+    "cell": "Bank!E4",
+    "before": "Tolerance",
+    "after": "Unmatched"
+   },
+   {
+    "cell": "BankRec!B10",
+    "before": 780,
+    "after": 5779.5
+   },
+   {
+    "cell": "BankRec!B15",
+    "before": -25,
+    "after": 4970
+   },
+   {
+    "cell": "BankRec!B16",
+    "before": 4.5,
+    "after": 0
+   },
+   {
+    "cell": "BankRec!B12",
+    "before": 8780,
+    "after": 13779.5
+   },
+   {
+    "cell": "BankRec!B17",
+    "before": 8780,
+    "after": 13779.5
+   },
+   {
+    "cell": "BankRec!B19",
+    "before": 0,
+    "after": 0
+   }
+  ]
+ },
+ {
+  "id": "E7.2",
+  "lab": 7,
+  "title": "Bank statement balance keyed wrong (10,100)",
+  "changes": {
+   "BankRec!B5": 10100
+  },
+  "watch": [
+   "BankRec!B19",
+   "BankRec!B20"
+  ],
+  "results": [
+   {
+    "cell": "BankRec!B19",
+    "before": 0,
+    "after": 100
+   },
+   {
+    "cell": "BankRec!B20",
+    "before": "Reconciled",
+    "after": "Difference: 100.00"
+   }
+  ]
+ },
+ {
+  "id": "E8.1",
+  "lab": 8,
+  "title": "Roll the as-of date to 2026-09-30",
+  "changes": {
+   "AR!H2": "2026-09-30"
+  },
+  "watch": [
+   "ARSummary!B4",
+   "ARSummary!B5",
+   "ARSummary!B6",
+   "ARSummary!B7",
+   "ARSummary!B8",
+   "ARSummary!E9"
+  ],
+  "results": [
+   {
+    "cell": "ARSummary!B4",
+    "before": 900,
+    "after": 0
+   },
+   {
+    "cell": "ARSummary!B5",
+    "before": 2850,
+    "after": 900
+   },
+   {
+    "cell": "ARSummary!B6",
+    "before": 1500,
+    "after": 2850
+   },
+   {
+    "cell": "ARSummary!B7",
+    "before": 1200,
+    "after": 1500
+   },
+   {
+    "cell": "ARSummary!B8",
+    "before": 3000,
+    "after": 4200
+   },
+   {
+    "cell": "ARSummary!E9",
+    "before": 1816.5,
+    "after": 2485.5
+   }
+  ]
+ },
+ {
+  "id": "E9.1",
+  "lab": 9,
+  "title": "Insert an outlier: Apr-24 sales = 250,000",
+  "changes": {
+   "Forecast!C8": 250000
+  },
+  "watch": [
+   "Forecast!L19",
+   "Forecast!M8",
+   "Forecast!E41",
+   "Forecast!B54"
+  ],
+  "results": [
+   {
+    "cell": "Forecast!L19",
+    "before": 1674.61868743048,
+    "after": 950.443604004449
+   },
+   {
+    "cell": "Forecast!M8",
+    "before": 1.00100923724838,
+    "after": 1.36956149864869
+   },
+   {
+    "cell": "Forecast!E41",
+    "before": 146499.142792548,
+    "after": 134252.380595987
+   },
+   {
+    "cell": "Forecast!B54",
+    "before": 0.0461637774036489,
+    "after": 0.161791702130333
+   }
+  ]
+ },
+ {
+  "id": "E10.1",
+  "lab": 10,
+  "title": "Switch to the Upside scenario (C8 = 3)",
+  "changes": {
+   "Drivers!C8": 3
+  },
+  "watch": [
+   "Drivers!C9",
+   "Drivers!G17",
+   "Drivers!H18",
+   "Checks!B9"
+  ],
+  "results": [
+   {
+    "cell": "Drivers!C9",
+    "before": "Base",
+    "after": "Upside"
+   },
+   {
+    "cell": "Drivers!G17",
+    "before": 1519.6413335808,
+    "after": 1673.91487359523
+   },
+   {
+    "cell": "Drivers!H18",
+    "before": 792069.592181376,
+    "after": 870199.816790155
+   },
+   {
+    "cell": "Checks!B9",
+    "before": true,
+    "after": true
+   }
+  ]
+ },
+ {
+  "id": "E10.2",
+  "lab": 10,
+  "title": "Base scenario with churn 3% (C5 = 0.03)",
+  "changes": {
+   "Drivers!C5": 0.03
+  },
+  "watch": [
+   "Drivers!H18",
+   "Drivers!B33",
+   "Drivers!D33"
+  ],
+  "results": [
+   {
+    "cell": "Drivers!H18",
+    "before": 792069.592181376,
+    "after": 767520.323539026
+   },
+   {
+    "cell": "Drivers!B33",
+    "before": 686728.710534918,
+    "after": 686728.710534918
+   },
+   {
+    "cell": "Drivers!D33",
+    "before": 767520.323539026,
+    "after": 767520.323539026
+   }
+  ]
+ }
+]
