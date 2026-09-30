@@ -1,7 +1,7 @@
 # PRD — "Excel Labs for Financial Analysis" Interactive Web App
 
 **Document type:** Product Requirements Document, written for implementation by **Claude Code**
-**Version:** 1.3 · September 29, 2026 (v1.1 added Section 17, public deployment and portfolio; v1.2 records the owner's decisions: GPLv3, repo `finance-excel-labs`; v1.3 applies the Milestone 0 resolutions, see the [change log](#change-log))
+**Version:** 1.4 · September 30, 2026 (v1.1 added Section 17, public deployment and portfolio; v1.2 records the owner's decisions: GPLv3, repo `finance-excel-labs`; v1.3 applies the Milestone 0 resolutions; v1.4 records the Milestone 1 engine findings, see the [change log](#change-log))
 **Owner:** repository owner ([@jiaxingxue](https://github.com/jiaxingxue))
 **Repository:** `jiaxingxue/finance-excel-labs` · **Live site (after first deploy):** https://jiaxingxue.github.io/finance-excel-labs/
 **Source content:** `Excel_Implementation_Labs_Financial_Analysis.md` (the "Labs document")
@@ -296,6 +296,7 @@ Charts read live engine values and re-render on recalculation. Use an MIT-licens
 - **Why:** mature headless JavaScript spreadsheet engine, 400+ built-in functions, multi-sheet support, an array-arithmetic mode (`useArrayArithmetic: true`), a custom-function plugin API, undo/redo, and copy/paste with reference adjustment.
 - **License (RESOLVED: GPLv3, see `docs/DECISIONS.md` D1):** HyperFormula is dual-licensed: **GPLv3** (config `licenseKey: 'gpl-v3'`), or a paid proprietary license from Handsontable. Using the GPL key means the app's source must be distributed under GPLv3-compatible terms. The owner has confirmed the app is open source under GPLv3, so configure `licenseKey: 'gpl-v3'`. (If this ever changes to a commercial key, supply it through an environment variable, `VITE_HF_LICENSE_KEY`.)
 - **Known function gaps to verify in Milestone 1:** a check of HyperFormula's published built-in function list suggests that some functions used by the labs are **not built in**: `AVERAGEIFS`, `LOOKUP`, `TEXT`, `INTERCEPT`, `TREND`, and `FORECAST.LINEAR`. Treat this list as a hypothesis. The conformance test (Section 7.3) is authoritative. Each confirmed gap gets a custom function plugin (Section 7.4).
+- **Milestone 1 result (HyperFormula 3.4.0):** `AVERAGEIFS`, `LOOKUP`, `INTERCEPT`, `TREND`, and `FORECAST.LINEAR` are missing. `TEXT` exists but ignores number-format codes, and `INDEX` on a one-row range with one index returns `#NUM!`; both are overridden by plugins. Two gaps are fixed in engine configuration instead: bare `TRUE`/`FALSE` literals (registered as named expressions) and output rounding (`smartRounding: false`). Details are in `docs/milestones/M1.md`.
 
 ### 7.3 Engine adapter and conformance suite
 Define an interface so the engine can be swapped:
@@ -343,7 +344,8 @@ Implement each confirmed gap as a plugin under `src/engine/plugins/`, following 
 | `INTERCEPT(known_y, known_x)` | Ordinary least-squares intercept. |
 | `TREND(known_y, known_x, new_x)` | OLS prediction (the scalar `new_x` case is required; the array case is nice to have). |
 | `FORECAST.LINEAR(x, known_y, known_x)` and alias `FORECAST` | OLS prediction at x. |
-| `TEXT(value, format)` | Delegate to SSF formatting. |
+| `TEXT(value, format)` | Delegate to SSF formatting. Overrides the built-in (M1). |
+| `INDEX(array, row, [col])` | With `col` omitted, a one-row array is indexed by column. Out-of-range indexes return `#REF!`. Overrides the built-in (M1). |
 
 If the chosen engine implements any of these natively and passes conformance, don't override it.
 
@@ -633,7 +635,8 @@ jobs:
       - run: npm run typecheck
       - name: Unit + golden cross-check tests
         run: npm test -- --reporter=default --reporter=json --outputFile=reports/vitest.json
-      # M1 adds: npm run verification:write (reports/vitest.json → public/verification.json)
+      - name: Write public/verification.json from the conformance results
+        run: npm run verification:write
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - name: E2E tests against the production build under BASE_PATH
@@ -670,7 +673,7 @@ Rules:
 - Playwright e2e tests run against the **built** site served under `BASE_PATH`, to catch sub-path bugs before they reach production.
 - **Least privilege:** the workflow default is `contents: read`; only the `deploy` job gets `pages: write` and `id-token: write`, so pull-request runs never hold Pages credentials.
 - **Concurrency:** superseded pull-request runs are cancelled, but a run on `main` is never cancelled, so a Pages deployment is never interrupted mid-flight.
-- The `verification:write` step (Section 17.5) is added in M1, when conformance results exist.
+- The `verification:write` step (Section 17.5) runs after the tests and before the build, so `verification.json` ships with the site.
 - Add `npm run smoke:prod`: a scheduled workflow (weekly, plus manual) that loads the live URL, opens Lab 2, and confirms the checks are green. It alerts through a failed run if the public site breaks.
 
 ### 17.5 Verification artifact and page
@@ -839,3 +842,4 @@ Claude Code creates this file with these headings and fills them from the finish
 | 1.1 | 2026-09-29 | Added Section 17 (public deployment and portfolio) |
 | 1.2 | 2026-09-29 | Recorded the owner's decisions: GPLv3, repo `finance-excel-labs` |
 | 1.3 | 2026-09-29 | Milestone 0 resolutions accepted by the owner (details in `docs/OPEN_ISSUES.md` #1–#12): hand-authored config moves to `src/config/labs.config.ts` and `src/data/` becomes generated-only, with `notice.json` and `manifest.json` added (§4.2, §4.5, §9.2); `workbook.json` keeps `{date}` values, converted to serials at engine load (§4.3); experiment `changes` convert only full `YYYY-MM-DD` strings, and `expect: null` means empty (§4.4); Appendix D/E JSON extraction is scoped to its own section (§4.2); local sub-path builds use `npm run build:pages` via `cross-env` (§17.3); the workflow uses Node 24 from `.nvmrc`, current action majors, job-scoped Pages permissions, and never cancels a `main` deploy (§17.4) |
+| 1.4 | 2026-09-30 | Milestone 1: recorded which HyperFormula gaps are real, added the `INDEX` and `TEXT` overrides to the plugin table (§7.2, §7.4), and added the `verification:write` step to the workflow (§17.4) |
