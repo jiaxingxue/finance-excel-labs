@@ -1,0 +1,21 @@
+.notice {
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  font-size: 0.9rem;
+}
+
+.notice summary {
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.body {
+  padding: 0 var(--space-3) var(--space-1);
+}
+
+.body p {
+  margin: 0 0 var(--space-2);
+}

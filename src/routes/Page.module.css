@@ -59,9 +59,19 @@
 }
 
 .labList li {
-  padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+}
+
+.labLink {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.labLink:hover {
+  background: var(--color-surface);
 }
 
 .labNumber {

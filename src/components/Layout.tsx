@@ -1,10 +1,12 @@
-import { NavLink, Outlet } from 'react-router';
+import { NavLink, Outlet, useMatch } from 'react-router';
 import styles from './Layout.module.css';
 
 const REPO_URL = 'https://github.com/jiaxingxue/finance-excel-labs';
 
 export function Layout() {
   const commit = import.meta.env.VITE_COMMIT_SHA;
+  // The lab workspace uses the full window width; other pages keep a readable column.
+  const wide = useMatch('/lab/:n') !== null;
   return (
     <div className={styles.shell}>
       <a className={styles.skip} href="#main">
@@ -20,7 +22,11 @@ export function Layout() {
           </NavLink>
         </nav>
       </header>
-      <main id="main" className={styles.main} tabIndex={-1}>
+      <main
+        id="main"
+        className={wide ? `${styles.main} ${styles.wide}` : styles.main}
+        tabIndex={-1}
+      >
         <Outlet />
       </main>
       <footer className={styles.footer}>

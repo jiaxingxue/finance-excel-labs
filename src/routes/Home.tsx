@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import manifest from '../data/manifest.json' with { type: 'json' };
 import { useDocumentTitle } from '../components/useDocumentTitle.ts';
 import styles from './Page.module.css';
@@ -16,8 +17,9 @@ export function Home() {
       </p>
 
       <p className={styles.notice} role="status">
-        <strong>In development.</strong> This placeholder confirms the build and content pipeline.
-        The interactive labs arrive in later milestones.
+        <strong>In development.</strong> Explore mode is live: open a lab to read the lesson next to
+        the live workbook and its checks. Build, What-if, and Challenge modes arrive in later
+        milestones.
       </p>
 
       <dl className={styles.stats} aria-label="Content loaded from the Labs document">
@@ -43,7 +45,9 @@ export function Home() {
       <ol className={styles.labList}>
         {labs.map((lab) => (
           <li key={lab.id}>
-            <span className={styles.labNumber}>Lab {lab.n}</span> {lab.title}
+            <Link to={`/lab/${lab.n}`} className={styles.labLink}>
+              <span className={styles.labNumber}>Lab {lab.n}</span> {lab.title}
+            </Link>
           </li>
         ))}
       </ol>
