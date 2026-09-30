@@ -1,0 +1,11 @@
+{
+  // Playwright specs: Node code plus callbacks that run in the browser (page.evaluate),
+  // so these need the DOM types that scripts/ and unit tests must not see.
+  "extends": "./tsconfig.node.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.e2e.tsbuildinfo",
+    "lib": ["ES2023", "DOM"]
+  },
+  "include": ["tests/e2e", "src/content", "src/config", "src/data/*.json"],
+  "exclude": []
+}

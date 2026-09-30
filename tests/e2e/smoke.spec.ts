@@ -1,20 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
-
-/** Fail on console errors and on any request that leaves the site's own origin (PRD §8 privacy). */
-function watch(page: Page, baseURL: string) {
-  const origin = new URL(baseURL).origin;
-  const foreign: string[] = [];
-  const errors: string[] = [];
-  page.on('request', (req) => {
-    const url = req.url();
-    if (!url.startsWith('data:') && new URL(url).origin !== origin) foreign.push(url);
-  });
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') errors.push(msg.text());
-  });
-  page.on('pageerror', (err) => errors.push(err.message));
-  return { foreign, errors };
-}
+import { expect, test } from '@playwright/test';
+import { watch } from './helpers.ts';
 
 test('home page loads under the base path with content from the Labs document', async ({
   page,
