@@ -2,8 +2,8 @@
 // components subscribe to a version number and read values through this store.
 
 import type { WorkbookSpec } from '../content/types.ts';
-import { parseA1 } from '../engine/address.ts';
-import type { CellRef, CellValue, FormulaEngine } from '../engine/types.ts';
+import { isoDateToSerial, parseA1 } from '../engine/address.ts';
+import type { CellEntry, CellRef, CellValue, ChangedCell, FormulaEngine } from '../engine/types.ts';
 import type { CellInput } from './parseInput.ts';
 
 export interface Extent {
@@ -29,11 +29,17 @@ export class WorkbookStore {
 
   private readonly engine: FormulaEngine;
   private readonly original: WorkbookSpec;
+  /** Values of the Labs document's workbook, captured before any edit ("before" in WI-2). */
+  private readonly base = new Map<string, CellValue>();
 
   constructor(engine: FormulaEngine, original: WorkbookSpec) {
     this.engine = engine;
     this.original = original;
     this.resetExtents();
+    for (const [sheet, cells] of Object.entries(original.sheets)) {
+      for (const cell of Object.keys(cells))
+        this.base.set(`${sheet}!${cell}`, engine.getValue({ sheet, cell }));
+    }
   }
 
   get sheetOrder(): readonly string[] {
@@ -60,19 +66,43 @@ export class WorkbookStore {
     return this.original.sheets[sheet]?.[cell]?.fmt;
   }
 
+  /** The cell's value in the Labs document's workbook; `null` for cells it leaves blank. */
+  baseValue(ref: CellRef): CellValue {
+    return this.base.get(keyOf(ref)) ?? null;
+  }
+
+  /** The cell's content in the Labs document's workbook, as `enter` accepts it. */
+  originalContent({ sheet, cell }: CellRef): CellInput {
+    const spec = this.original.sheets[sheet]?.[cell];
+    if (!spec) return null;
+    if ('f' in spec) return spec.f;
+    if (typeof spec.v === 'object') return isoDateToSerial(spec.v.date) ?? null;
+    return spec.v;
+  }
+
+  /** Evaluates a formula on a sheet without storing it (conditional formats, GR-12). */
+  evaluate(formula: string, sheet: string): CellValue {
+    return this.engine.evaluate(formula, sheet);
+  }
+
   extent(sheet: string): Extent {
     return this.extents.get(sheet) ?? { rows: 0, cols: 0 };
   }
 
   /** Commits typed content. Returns an error message instead of throwing (PRD §8 robustness). */
   enter(ref: CellRef, content: CellInput): string | null {
-    let changed;
+    return this.enterMany([{ ref, content }]);
+  }
+
+  /** Commits several cells as one recalculation and one undo step (What-if controls). */
+  enterMany(entries: CellEntry[]): string | null {
+    let changed: ChangedCell[];
     try {
-      changed = this.engine.setCell(ref, content);
+      changed = this.engine.setCells(entries);
     } catch (error) {
       return error instanceof Error ? error.message : String(error);
     }
-    this.grow(ref);
+    for (const { ref } of entries) this.grow(ref);
     this.lastChange = {
       seq: this.lastChange.seq + 1,
       keys: new Set(changed.map((c) => keyOf(c.ref))),

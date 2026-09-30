@@ -159,6 +159,41 @@ describe('editing', () => {
     ]);
   });
 
+  it('setCells writes several cells with one recalculation and one undo step', () => {
+    const engine = small();
+    const changes = engine.setCells([
+      { ref: { sheet: 'S', cell: 'A1' }, content: 10 },
+      { ref: { sheet: 'S', cell: 'D1' }, content: 'text' },
+    ]);
+    const byRef = Object.fromEntries(changes.map((c) => [`${c.ref.sheet}!${c.ref.cell}`, c.value]));
+    expect(byRef).toMatchObject({ 'S!A1': 10, 'S!D1': 'text', 'T!A1': 21 });
+    engine.undo();
+    expect(engine.getValue({ sheet: 'S', cell: 'A1' })).toBe(1);
+    expect(engine.getValue({ sheet: 'S', cell: 'D1' })).toBe('label');
+  });
+
+  it('setCells changes nothing when one entry is rejected', () => {
+    const engine = small();
+    expect(() =>
+      engine.setCells([
+        { ref: { sheet: 'S', cell: 'A1' }, content: 10 },
+        { ref: { sheet: 'S', cell: 'E1' }, content: '=Ledger!A1' },
+      ]),
+    ).toThrow(/unknown sheet "Ledger"/);
+    expect(engine.getValue({ sheet: 'S', cell: 'A1' })).toBe(1);
+  });
+
+  it('evaluate computes a formula on a sheet without changing the workbook', () => {
+    const engine = small();
+    expect(engine.evaluate('=$B1=2', 'S')).toBe(true);
+    expect(engine.evaluate('=D1="label"', 'S')).toBe(true);
+    expect(engine.evaluate('=T!A1*10', 'S')).toBe(30);
+    expect(engine.evaluate('=A1=TRUE', 'S')).toBe(false);
+    expect(engine.evaluate('=Ledger!A1', 'S')).toMatchObject({ error: '#ERROR!' });
+    expect(engine.evaluate('=SUM(', 'S')).toMatchObject({ error: '#ERROR!' });
+    expect(engine.exportCells()).toEqual(small().exportCells());
+  });
+
   it('keeps number formats with the cell position', () => {
     const engine = small();
     engine.setCell({ sheet: 'S', cell: 'B1' }, 5);

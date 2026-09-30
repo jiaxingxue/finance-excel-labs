@@ -89,6 +89,54 @@ describe('WorkbookStore', () => {
     store.destroy();
   });
 
+  it('enterMany writes several cells as one recalculation and one undo step', () => {
+    const store = make();
+    const h7 = bva('H7');
+    expect(store.getValue(h7)).toBe(false);
+    expect(
+      store.enterMany([
+        { ref: bva('B2'), content: 0.01 },
+        { ref: bva('B3'), content: 0 },
+      ]),
+    ).toBeNull();
+    expect(store.getVersion()).toBe(1);
+    expect(store.getValue(h7)).toBe(true);
+    expect(store.lastChange.keys.has('BvA!H7')).toBe(true);
+    store.undo();
+    expect([store.getValue(bva('B2')), store.getValue(bva('B3'))]).toEqual([
+      store.baseValue(bva('B2')),
+      store.baseValue(bva('B3')),
+    ]);
+    store.destroy();
+  });
+
+  it('keeps the Labs document’s values and contents after edits', () => {
+    const store = make();
+    const e6 = bva('E6');
+    const before = store.getValue(e6);
+    store.enter(bva('B1'), '2026-07');
+    expect(store.getValue(e6)).not.toEqual(before);
+    expect(store.baseValue(e6)).toEqual(before);
+    expect(store.baseValue(bva('Z99'))).toBeNull();
+    // Original contents, as `enter` accepts them: text stays text, dates become serials.
+    expect(store.originalContent(bva('B1'))).toBe((spec.sheets.BvA!.B1 as { v: string }).v);
+    expect(store.originalContent({ sheet: 'AR', cell: 'H2' })).toBe(
+      store.baseValue({ sheet: 'AR', cell: 'H2' }),
+    );
+    expect(store.originalContent(e6)).toBe(store.getFormula(e6));
+    expect(store.originalContent(bva('Z99'))).toBeNull();
+    store.destroy();
+  });
+
+  it('evaluates a formula on a sheet without changing it', () => {
+    const store = make();
+    expect(store.evaluate('=$G6="Unfavorable"', 'BvA')).toBe(
+      store.getValue(bva('G6')) === 'Unfavorable',
+    );
+    expect(store.getVersion()).toBe(0);
+    store.destroy();
+  });
+
   it('reads number formats from the Labs document', () => {
     const store = make();
     expect(store.fmt(bva('F6'))).toBe(spec.sheets.BvA!.F6!.fmt);
