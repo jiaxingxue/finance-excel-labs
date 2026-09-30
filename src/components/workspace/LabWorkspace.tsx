@@ -1,14 +1,16 @@
-// The lab workspace in Explore mode (PRD §5.2, §6.2): lesson, grid, checks, inspector.
+// The lab workspace (PRD §5.2): lesson, grid, checks, inspector, and in What-if mode (§6.4) the
+// controls. The mode is the `?mode=` query parameter, so `/#/lab/7?mode=whatif` is a deep link.
 // The lesson renders at once; the formula engine loads in the background (PRD §8).
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import assertionsJson from '../../data/assertions.json' with { type: 'json' };
 import exercisesJson from '../../data/exercises.json' with { type: 'json' };
 import manifest from '../../data/manifest.json' with { type: 'json' };
 import type { Assertion, Exercise, Lesson, LessonSummary } from '../../content/types.ts';
 import { labs, type LabConfig } from '../../config/labs.config.ts';
 import { toA1 } from '../../engine/address.ts';
-import type { RangeRef } from '../../engine/types.ts';
+import type { CellEntry, CellRef, RangeRef } from '../../engine/types.ts';
 import { formulaBarText } from '../../format/displayValue.ts';
 import { assertionPasses } from '../../grading/match.ts';
 import { linkScopeForLab } from '../../lesson/cellRefs.ts';
@@ -29,7 +31,8 @@ import { LessonPanel } from '../lesson/LessonPanel.tsx';
 import { VerificationNotice } from '../notice/VerificationNotice.tsx';
 import { CellInspector } from '../side/CellInspector.tsx';
 import { ChecksPanel, type CheckRow } from '../side/ChecksPanel.tsx';
-import { LabHeader } from './LabHeader.tsx';
+import { WhatIfPanel } from '../whatif/WhatIfPanel.tsx';
+import { LabHeader, type Mode } from './LabHeader.tsx';
 import styles from './Workspace.module.css';
 
 const assertions = assertionsJson as Assertion[];
@@ -62,6 +65,13 @@ export function LabWorkspace({ lab, summary, lesson }: LabWorkspaceProps) {
   const lastOnSheet = useRef(new Map<string, Selection>());
   const bodyRef = useRef<HTMLDivElement>(null);
   const version = useWorkbookVersion(store);
+  const [params, setParams] = useSearchParams();
+  const whatIfAvailable = lab.controls.length > 0;
+  const mode: Mode = params.get('mode') === 'whatif' && whatIfAvailable ? 'whatif' : 'explore';
+
+  function setMode(next: Mode) {
+    setParams(next === 'explore' ? {} : { mode: next }, { replace: true });
+  }
 
   // Load the engine only after the lesson is on screen.
   const lessonReady = lesson !== null;
@@ -87,6 +97,7 @@ export function LabWorkspace({ lab, summary, lesson }: LabWorkspaceProps) {
   const scope = useMemo(() => linkScopeForLab(lab, allSheets), [lab]);
   const visibleSheets = showAll && store ? store.sheetOrder : lab.sheets;
   const readOnly = !lab.sheets.includes(selection.sheet);
+  const isReadOnly = (sheet: string) => !lab.sheets.includes(sheet);
 
   const focusGrid = () =>
     bodyRef.current?.querySelector<HTMLElement>('[role="grid"]')?.focus({ preventScroll: true });
@@ -123,19 +134,33 @@ export function LabWorkspace({ lab, summary, lesson }: LabWorkspaceProps) {
     if (next) selectSheet(next);
   }
 
-  function commit(cell: string, typed: string): boolean {
+  /** Commits typed text to a cell, which need not be the selected one (formula bar on blur). */
+  function commit(ref: CellRef, typed: string): boolean {
     if (!store) return false;
-    if (readOnly) {
-      blockedEdit();
+    if (isReadOnly(ref.sheet)) {
+      blockedEdit(ref.sheet);
       return false;
     }
-    const error = store.enter({ sheet: selection.sheet, cell }, parseInput(typed));
+    const error = store.enter(ref, parseInput(typed));
     setStatus(error ? `That entry wasn’t accepted: ${error}` : null);
     return error === null;
   }
 
-  function blockedEdit() {
-    setStatus(`${selection.sheet} belongs to another lab, so it’s read-only here.`);
+  function write(entries: CellEntry[]): string | null {
+    if (!store) return 'The formula engine is still loading.';
+    const error = store.enterMany(entries);
+    setStatus(error ? `That value wasn’t accepted: ${error}` : null);
+    return error;
+  }
+
+  function blockedEdit(sheet = selection.sheet) {
+    setStatus(`${sheet} belongs to another lab, so it’s read-only here.`);
+  }
+
+  function selectCell({ sheet, cell }: CellRef) {
+    if (!visibleSheets.includes(sheet)) setShowAll(true);
+    select(cellSelection(sheet, cell));
+    setPhoneTab('sheet');
   }
 
   function resetLab(s: WorkbookStore) {
@@ -207,6 +232,9 @@ export function LabWorkspace({ lab, summary, lesson }: LabWorkspaceProps) {
         progress={progress}
         onReset={store ? () => resetLab(store) : null}
         onToggleLesson={hasSheets ? () => setDrawerOpen((o) => !o) : null}
+        mode={mode}
+        whatIfAvailable={whatIfAvailable}
+        onMode={setMode}
       />
       <VerificationNotice />
 
@@ -228,7 +256,13 @@ export function LabWorkspace({ lab, summary, lesson }: LabWorkspaceProps) {
                 aria-pressed={phoneTab === tab}
                 onClick={() => setPhoneTab(tab)}
               >
-                {tab === 'lesson' ? 'Lesson' : tab === 'sheet' ? 'Sheet' : 'Checks'}
+                {tab === 'lesson'
+                  ? 'Lesson'
+                  : tab === 'sheet'
+                    ? 'Sheet'
+                    : mode === 'whatif'
+                      ? 'What-if'
+                      : 'Checks'}
               </button>
             ))}
           </div>
@@ -245,13 +279,14 @@ export function LabWorkspace({ lab, summary, lesson }: LabWorkspaceProps) {
             <section className={styles.sheet} aria-label="Spreadsheet">
               <FormulaBar
                 label={selectionLabel(selection)}
+                target={active}
                 contents={
                   activeCell
                     ? formulaBarText(activeCell.value, activeCell.formula, activeCell.fmt)
                     : ''
                 }
                 readOnly={!store || readOnly}
-                onCommit={(typed) => commit(active.cell, typed)}
+                onCommit={commit}
                 onDone={focusGrid}
               />
               {status && (
@@ -270,7 +305,7 @@ export function LabWorkspace({ lab, summary, lesson }: LabWorkspaceProps) {
                   version={version}
                   selection={selection}
                   onSelect={select}
-                  onCommit={commit}
+                  onCommit={(cell, typed) => commit({ sheet: selection.sheet, cell }, typed)}
                   onBlockedEdit={blockedEdit}
                   readOnly={readOnly}
                   onSwitchSheet={switchSheet}
@@ -290,15 +325,23 @@ export function LabWorkspace({ lab, summary, lesson }: LabWorkspaceProps) {
               />
             </section>
 
-            <div className={styles.checks}>
+            <div className={styles.checks} data-mode={mode}>
+              {mode === 'whatif' &&
+                (store ? (
+                  <WhatIfPanel
+                    lab={lab}
+                    store={store}
+                    version={version}
+                    onWrite={write}
+                    onSelectCell={selectCell}
+                  />
+                ) : (
+                  <p className={styles.muted}>Loading the formula engine…</p>
+                ))}
               <ChecksPanel
                 rows={checkRows}
                 emptyNote={`Lab ${lab.n} owns no checks.`}
-                onSelect={(sheet, cell) => {
-                  if (!visibleSheets.includes(sheet)) setShowAll(true);
-                  select(cellSelection(sheet, cell));
-                  setPhoneTab('sheet');
-                }}
+                onSelect={(sheet, cell) => selectCell({ sheet, cell })}
               />
             </div>
             <div className={styles.inspector}>

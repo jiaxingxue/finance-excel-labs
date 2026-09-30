@@ -1,9 +1,19 @@
-// The spreadsheet grid (GR-1, GR-2, GR-4, GR-6, GR-13). A plain <table role="grid">: sheets are at
+// The spreadsheet grid (GR-1, GR-2, GR-4, GR-6, GR-12, GR-13). A plain <table role="grid">: sheets are at
 // most 57 rows × 15 columns, so nothing is virtualized (PRD §9.1). The table holds keyboard focus
 // and points at the active cell with aria-activedescendant. The parent keys it by sheet, so
 // switching sheets drops an edit in progress.
 
-import { memo, useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react';
+import {
+  memo,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type MouseEvent,
+} from 'react';
+import { labs } from '../../config/labs.config.ts';
 import { toA1, type GridPosition } from '../../engine/address.ts';
 import { isErrorValue } from '../../engine/types.ts';
 import { formatCell, formulaBarText } from '../../format/displayValue.ts';
@@ -16,8 +26,13 @@ import {
   type Direction,
   type Selection,
 } from '../../workspace/selection.ts';
+import { sheetFormats, type CellFormat } from '../../workspace/conditionalFormat.ts';
 import type { WorkbookStore } from '../../workspace/workbookStore.ts';
 import styles from './Grid.module.css';
+
+// Conditional formats belong to their sheet, as in Excel, so they show in every lab that shows it.
+const formatRules = labs.flatMap((l) => l.conditionalFormats);
+const NO_FORMAT: CellFormat = {};
 
 interface GridProps {
   store: WorkbookStore;
@@ -72,6 +87,11 @@ export function Grid({
   };
 
   const extent = store.extent(sheet);
+  // Conditional formats for this sheet; the engine evaluates each rule.
+  const formats = useMemo(() => {
+    void version; // recompute after every recalculation
+    return sheetFormats(formatRules, sheet, store);
+  }, [store, sheet, version]);
   const sel = normalize(selection);
   const bounds: Bounds = {
     rows: Math.max(extent.rows + 3, sel.bottom + 2, MIN_ROWS),
@@ -169,6 +189,7 @@ export function Grid({
   }
 
   function onMouseOver(e: MouseEvent) {
+    showFullTextIfCut(e.target as HTMLElement);
     if (!dragging.current || e.buttons !== 1) return;
     const pos = positionOf(e);
     if (pos) select(selection.anchor, pos);
@@ -248,6 +269,7 @@ export function Grid({
                 const inRange =
                   row >= sel.top && row <= sel.bottom && col >= sel.left && col <= sel.right;
                 const key = `${sheet}!${cell}`;
+                const format = formats.get(cell) ?? NO_FORMAT;
                 return (
                   <GridCell
                     key={col}
@@ -270,6 +292,9 @@ export function Grid({
                     active={row === selection.anchor.row && col === selection.anchor.col}
                     inRange={inRange}
                     flashSeq={store.lastChange.keys.has(key) ? store.lastChange.seq : 0}
+                    fill={format.fill}
+                    bold={format.bold}
+                    scale={format.scale}
                   />
                 );
               })}
@@ -295,6 +320,10 @@ interface GridCellProps {
   inRange: boolean;
   /** Non-zero when the cell changed in the last recalculation; a new value replays the flash. */
   flashSeq: number;
+  /** Conditional format (GR-12). */
+  fill?: CellFormat['fill'];
+  bold?: boolean;
+  scale?: number;
 }
 
 const GridCell = memo(function GridCell({
@@ -307,11 +336,17 @@ const GridCell = memo(function GridCell({
   active,
   inRange,
   flashSeq,
+  fill,
+  bold,
+  scale,
 }: GridCellProps) {
   const className = [
     styles.cell,
     styles[kind],
     input && styles.input,
+    fill && styles[fill],
+    scale !== undefined && styles.scale,
+    bold && styles.bold,
     inRange && styles.inRange,
     active && styles.active,
   ]
@@ -325,6 +360,11 @@ const GridCell = memo(function GridCell({
       data-row={row}
       data-col={col}
       className={className}
+      style={
+        scale === undefined
+          ? undefined
+          : ({ '--cf-scale': `${Math.round(scale * 100)}%` } as CSSProperties)
+      }
     >
       <span key={flashSeq} className={flashSeq ? styles.flash : undefined}>
         {text}
@@ -366,4 +406,15 @@ function CellEditor({ label, text, onChange, onFinish }: CellEditorProps) {
       }}
     />
   );
+}
+
+/**
+ * Text cut off by the column width gets a hover tooltip with the full text; text that fits gets
+ * none. Keyboard and screen-reader users get the full text from the formula bar and the live region.
+ */
+function showFullTextIfCut(target: HTMLElement) {
+  const span = target.closest('td')?.querySelector<HTMLElement>(':scope > span');
+  if (!span) return;
+  if (span.scrollWidth > span.clientWidth) span.title = span.textContent ?? '';
+  else span.removeAttribute('title');
 }

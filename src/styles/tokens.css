@@ -34,6 +34,13 @@
   --color-syntax-function: #1f5f99;
   --color-syntax-string: #8a4a00;
   --color-syntax-ref: #1d6b3a;
+  /* Conditional formats (GR-12). Light fills keep body text at ≥ 4.5:1. */
+  --color-cf-red: #f9d6d3;
+  --color-cf-orange: #fde0bf;
+  --color-cf-yellow: #fbf1a9;
+  --color-cf-green: #cdecd3;
+  --color-cf-scale-low: #cdecd3;
+  --color-cf-scale-high: #f6c4bf;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -57,6 +64,12 @@
     --color-syntax-function: #7fb4e6;
     --color-syntax-string: #e0b070;
     --color-syntax-ref: #7fd49a;
+    --color-cf-red: #4d2624;
+    --color-cf-orange: #4a3316;
+    --color-cf-yellow: #433d14;
+    --color-cf-green: #1e4029;
+    --color-cf-scale-low: #1e4029;
+    --color-cf-scale-high: #572925;
   }
 }
 
@@ -80,4 +93,10 @@
   --color-syntax-function: #7fb4e6;
   --color-syntax-string: #e0b070;
   --color-syntax-ref: #7fd49a;
+  --color-cf-red: #4d2624;
+  --color-cf-orange: #4a3316;
+  --color-cf-yellow: #433d14;
+  --color-cf-green: #1e4029;
+  --color-cf-scale-low: #1e4029;
+  --color-cf-scale-high: #572925;
 }

@@ -1,0 +1,257 @@
+/* What-if panel (WI-1–WI-4). Shares the panel frame with the checks panel (Side.module.css). */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.reset {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.reset:disabled {
+  color: var(--color-text-muted);
+  cursor: default;
+}
+
+.group {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: var(--space-1);
+  font-weight: 650;
+  font-size: 0.88rem;
+}
+
+.row {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 0.86rem;
+}
+
+.label {
+  padding: 0;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+summary.label {
+  cursor: pointer;
+}
+
+.sliderLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sliderLine input[type='range'] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--color-accent);
+}
+
+.valueBox,
+.number,
+.select,
+.date {
+  padding: 0.15rem 0.35rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-input-tint);
+  color: var(--color-text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.valueBox {
+  width: 6.5rem;
+  text-align: right;
+}
+
+.number {
+  width: 8.5rem;
+  max-width: 100%;
+  text-align: right;
+}
+
+.select,
+.date {
+  justify-self: start;
+}
+
+.base {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.segmented {
+  display: inline-flex;
+  justify-self: start;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.segmented label {
+  position: relative;
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.segmented span {
+  display: block;
+  padding: 0.2rem 0.8rem;
+  background: var(--color-surface);
+}
+
+.segmented label + label span {
+  border-left: 1px solid var(--color-border);
+}
+
+.segmented input:checked + span {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font-weight: 600;
+}
+
+.segmented input:focus-visible + span {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.tableScroll {
+  max-height: 16rem;
+  overflow: auto;
+}
+
+.table {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.table th {
+  padding: 0.1rem 0.35rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 1px;
+}
+
+.table .number {
+  width: 5.5rem;
+}
+
+.action {
+  justify-self: start;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action[aria-pressed='true'] {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.note {
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-surface);
+  font-size: 0.8rem;
+}
+
+.subheading {
+  margin: var(--space-2) 0 0;
+  font-size: 0.9rem;
+}
+
+.deltas {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.82rem;
+}
+
+.deltas button {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 var(--space-2);
+  width: 100%;
+  padding: 0.15rem 0.4rem;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.deltas button:hover {
+  background: var(--color-surface);
+}
+
+.deltas .changed {
+  border-left-color: var(--color-accent);
+  background: var(--color-range);
+}
+
+.values {
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.unchanged {
+  color: var(--color-text-muted);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
