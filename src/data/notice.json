@@ -1,0 +1,3 @@
+{
+  "markdown": "> **Verification.** Every classic-Excel formula in this document was built into a single workbook (15 sheets, 668 formulas) and recalculated by a spreadsheet engine (LibreOffice Calc 24.2). All 277 expected-value checks and 12 what-if experiments shown here come from that recalculation, compared against independent Python calculations.\n>\n> **Microsoft 365–only formulas** (XLOOKUP, FILTER, UNIQUE, LET, LAMBDA, GROUPBY, PIVOTBY, SCAN, HSTACK) are shown as \"modern equivalents.\" That engine cannot run them, so they were **not** machine-executed. Each one is designed to return the same result as its verified classic formula. Confirm them in Excel 365 before relying on them.\n"
+}

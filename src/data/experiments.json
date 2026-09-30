@@ -1,0 +1,182 @@
+[
+  {
+    "id": "E2.1",
+    "lab": 2,
+    "title": "Lower the % threshold to 3%",
+    "changes": {
+      "BvA!B2": 0.03
+    },
+    "expect": {
+      "BvA!H6": true,
+      "BvA!H7": true,
+      "BvA!H8": false,
+      "BvA!H9": true,
+      "BvA!H10": false,
+      "BvA!H11": false,
+      "BvA!H12": true
+    }
+  },
+  {
+    "id": "E2.2",
+    "lab": 2,
+    "title": "Switch the report period to 2026-07 (no budget loaded)",
+    "changes": {
+      "BvA!B1": "2026-07"
+    },
+    "expect": {
+      "BvA!C6": 0,
+      "BvA!D6": 455000,
+      "BvA!F6": "n/a",
+      "BvA!G6": "Favorable",
+      "BvA!H6": false,
+      "BvA!D14": 0
+    }
+  },
+  {
+    "id": "E3.1",
+    "lab": 3,
+    "title": "Raise the flux % threshold to 20%",
+    "changes": {
+      "Flux!B4": 0.2
+    },
+    "expect": {
+      "Flux!I8": null,
+      "Flux!I9": null,
+      "Flux!I10": null,
+      "Flux!I11": "Explain",
+      "Flux!I12": null,
+      "Flux!I13": null
+    }
+  },
+  {
+    "id": "E4.1",
+    "lab": 4,
+    "title": "Pro sells at budget price (E6 = 120)",
+    "changes": {
+      "PVM!E6": 120
+    },
+    "expect": {
+      "PVM!J8": 3600,
+      "PVM!K8": -937.5,
+      "PVM!L8": 3937.5,
+      "PVM!M8": 6600,
+      "PVM!N8": 0
+    }
+  },
+  {
+    "id": "E4.2",
+    "lab": 4,
+    "title": "Same total units, budget mix (D5=994, D6=497, D7=99)",
+    "changes": {
+      "PVM!D5": 994,
+      "PVM!D6": 497,
+      "PVM!D7": 99
+    },
+    "expect": {
+      "PVM!K8": -937.5,
+      "PVM!L8": -122.5,
+      "PVM!N8": 0
+    }
+  },
+  {
+    "id": "E5.1",
+    "lab": 5,
+    "title": "Negotiate freight rate down to 11.50",
+    "changes": {
+      "CostVar!B6": 11.5
+    },
+    "expect": {
+      "CostVar!B10": -1150,
+      "CostVar!C10": "Favorable",
+      "CostVar!B12": 2450,
+      "CostVar!C12": "Unfavorable"
+    }
+  },
+  {
+    "id": "E7.1",
+    "lab": 7,
+    "title": "Tighten amount tolerance to 1.00",
+    "changes": {
+      "BankRec!B2": 1
+    },
+    "expect": {
+      "Book!E4": "Unmatched",
+      "Bank!E4": "Unmatched",
+      "BankRec!B10": 5779.5,
+      "BankRec!B15": 4970,
+      "BankRec!B16": 0,
+      "BankRec!B12": 13779.5,
+      "BankRec!B17": 13779.5,
+      "BankRec!B19": 0
+    }
+  },
+  {
+    "id": "E7.2",
+    "lab": 7,
+    "title": "Bank statement balance keyed wrong (10,100)",
+    "changes": {
+      "BankRec!B5": 10100
+    },
+    "expect": {
+      "BankRec!B19": 100,
+      "BankRec!B20": "Difference: 100.00"
+    }
+  },
+  {
+    "id": "E8.1",
+    "lab": 8,
+    "title": "Roll the as-of date to 2026-09-30",
+    "changes": {
+      "AR!H2": "2026-09-30"
+    },
+    "expect": {
+      "ARSummary!B4": 0,
+      "ARSummary!B5": 900,
+      "ARSummary!B6": 2850,
+      "ARSummary!B7": 1500,
+      "ARSummary!B8": 4200,
+      "ARSummary!E9": 2485.5
+    }
+  },
+  {
+    "id": "E9.1",
+    "lab": 9,
+    "title": "Insert an outlier: Apr-24 sales = 250,000",
+    "changes": {
+      "Forecast!C8": 250000
+    },
+    "expect": {
+      "Forecast!L19": 950.443604004449,
+      "Forecast!M8": 1.36956149864869,
+      "Forecast!E41": 134252.380595987,
+      "Forecast!B54": 0.161791702130333
+    }
+  },
+  {
+    "id": "E10.1",
+    "lab": 10,
+    "title": "Switch to the Upside scenario (C8 = 3)",
+    "changes": {
+      "Drivers!C8": 3
+    },
+    "expect": {
+      "Drivers!C9": "Upside",
+      "Drivers!G17": 1673.91487359523,
+      "Drivers!H18": 870199.816790155,
+      "Checks!B9": true
+    }
+  },
+  {
+    "id": "E10.2",
+    "lab": 10,
+    "title": "Base scenario with churn 3% (C5 = 0.03)",
+    "changes": {
+      "Drivers!C5": 0.03
+    },
+    "expect": {
+      "Drivers!H18": 767520.323539026,
+      "Drivers!B33": 686728.710534918,
+      "Drivers!D33": 767520.323539026
+    }
+  }
+]

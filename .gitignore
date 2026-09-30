@@ -22,7 +22,6 @@ Thumbs.db
 # Claude Code local-only settings
 .claude/settings.local.json
 
-# Optional: keep private setup notes off GitHub (remove the leading "# " to enable).
-# Do this BEFORE the first commit; files already committed stay in the git history.
+# Private setup notes for the owner; kept off GitHub.
+# (docs/DECISIONS.md is committed, per the owner's decision on 2026-09-29.)
 START_HERE.md
-docs/DECISIONS.md
