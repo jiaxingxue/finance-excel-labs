@@ -27,5 +27,6 @@
     "playwright.config.ts",
     "src/content",
     "src/config"
-  ]
+  ],
+  "exclude": ["tests/e2e"]
 }

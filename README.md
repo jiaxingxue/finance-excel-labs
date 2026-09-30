@@ -1,6 +1,6 @@
 # Excel Labs for Financial Analysis
 
-> 🚧 **In development.** The live demo will be published at **https://jiaxingxue.github.io/finance-excel-labs/** once the first milestones are complete.
+> 🚧 **In development.** Live at **https://jiaxingxue.github.io/finance-excel-labs/**. Explore mode works (lesson, live grid, checks); Build, What-if, and Challenge modes arrive in later milestones.
 
 Interactive, auto-graded Excel labs for FP&A and accounting: budget vs. actual, price–volume–mix, bank reconciliation, AR aging, forecasting, and driver-based scenarios. Formulas run live in the browser in an Excel-compatible engine, and every result is checked against 277 independently verified expected values.
 
@@ -32,7 +32,8 @@ npm run check            # lint + typecheck + unit tests
 | Unit tests + golden cross-check | `npm test` |
 | Build as deployed on GitHub Pages | `npm run build:pages` (base path `/finance-excel-labs/`) |
 | Preview that build | `npm run preview:pages` → http://localhost:4173/finance-excel-labs/ |
-| End-to-end tests | `npx playwright install chromium` (once), then `npm run build:pages` and `npm run test:e2e` (it refuses a build made without the `/finance-excel-labs/` base) |
+| End-to-end tests | `npx playwright install chromium` (once), then `npm run build:pages` and `npm run test:e2e` (it refuses a build made without the `/finance-excel-labs/` base). The `verification.json` test needs the file CI writes: first run `npm test -- --reporter=default --reporter=json --outputFile=reports/vitest.json` and `npm run verification:write` |
+| Milestone screenshots | `npm run screenshots:m2` (after `npm run build:pages`) |
 | Format | `npm run format` / `npm run format:check` |
 | Third-party notices | `npm run notices` (after any dependency change) |
 

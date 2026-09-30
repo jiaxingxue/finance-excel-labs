@@ -1,7 +1,7 @@
 # PRD — "Excel Labs for Financial Analysis" Interactive Web App
 
 **Document type:** Product Requirements Document, written for implementation by **Claude Code**
-**Version:** 1.4 · September 30, 2026 (v1.1 added Section 17, public deployment and portfolio; v1.2 records the owner's decisions: GPLv3, repo `finance-excel-labs`; v1.3 applies the Milestone 0 resolutions; v1.4 records the Milestone 1 engine findings, see the [change log](#change-log))
+**Version:** 1.5 · September 30, 2026 (v1.1 added Section 17, public deployment and portfolio; v1.2 records the owner's decisions: GPLv3, repo `finance-excel-labs`; v1.3 applies the Milestone 0 resolutions; v1.4 records the Milestone 1 engine findings; v1.5 records the Milestone 2 scope split, see the [change log](#change-log))
 **Owner:** repository owner ([@jiaxingxue](https://github.com/jiaxingxue))
 **Repository:** `jiaxingxue/finance-excel-labs` · **Live site (after first deploy):** https://jiaxingxue.github.io/finance-excel-labs/
 **Source content:** `Excel_Implementation_Labs_Financial_Analysis.md` (the "Labs document")
@@ -384,7 +384,7 @@ Lab 11's workspace is a sandbox sheet where the learner calls these functions ag
 
 ### 9.1 Stack (recommended)
 - **Vite + React + TypeScript** (strict mode)
-- **State:** Zustand (UI state and progress); the engine instance lives outside React state and is accessed through the adapter
+- **State:** Zustand (UI state and progress) from M5, when persistence arrives; until then one small store read with React's `useSyncExternalStore`. The engine instance lives outside React state and is accessed through the adapter
 - **Grid:** a custom React grid component. The sheets are small (≤ 60 rows × 16 columns), so no virtualization is needed. Avoid commercial grid libraries.
 - **Markdown:** `react-markdown` + `remark-gfm`; a custom renderer for cell-reference links and live Result columns
 - **Formatting:** `ssf` (Excel number formats)
@@ -490,10 +490,10 @@ Hidden re-grading clones run in a Web Worker if they take longer than 16 ms, so 
 |---|---|---|---|
 | **M0** | Scaffold + content pipeline + deploy skeleton | Vite/React/TS app, lint/test setup, `extract-content.ts`, generated data, GitHub Actions workflow (Section 17.4), `LICENSE` (GPLv3), `README.md` kept current, placeholder page live on GitHub Pages once the repo is public | Section 11 #1; the workflow runs green |
 | **M1** | Engine + conformance | Adapter, plugins for confirmed gaps, conformance suite | Section 11 #2, **blocking gate** |
-| **M2** | Grid + Explore | Grid, formula bar, tabs, formats, lesson panel, cell links, checks panel | Section 11 #3 |
-| **M3** | What-if + Challenge | Controls, experiments, challenge cards, charts CT-1…CT-4 | Section 11 #5, #6 |
-| **M4** | Build mode | Blanking, fills, hints, anti-hard-coding, completion | Section 11 #4 |
-| **M5** | Export, Modern view, Lab 11, persistence | ExcelJS export, Modern view, simulated LAMBDA functions, localStorage | Section 11 #7, #8 |
+| **M2** | Grid + Explore | Grid, formula bar, tabs, formats, lesson panel, cell links, checks panel: GR-1–GR-4, GR-6, GR-11, GR-13 (+ undo/redo), EX-1–EX-4 (EX-2c deferred), LS-1, LS-4; axe-core check in e2e | Section 11 #3 |
+| **M3** | What-if + Challenge | Controls, experiments, challenge cards, charts CT-1…CT-4; also GR-7 (precedent outlines), GR-12 (conditional formatting), LS-2, LS-3 | Section 11 #5, #6 |
+| **M4** | Build mode | Blanking, fills, hints, anti-hard-coding, completion; also GR-8 (fill), GR-9 (copy/paste), GR-10 (autocomplete) | Section 11 #4 |
+| **M5** | Export, Modern view, Lab 11, persistence | ExcelJS export, Modern view, simulated LAMBDA functions, localStorage (introduces Zustand) | Section 11 #7, #8 |
 | **M6** | Polish + quality | Accessibility, dark mode, responsive layouts, service worker, performance | Section 11 #9, #10, #11 |
 | **M7** | Portfolio release | Verification page, `verification.json`, README (Section 17.6), automated screenshots/GIF, social preview, demo script in `docs/DEMO.md`, v1.0.0 tag and GitHub Release | Section 11 #12–#15 |
 
@@ -843,3 +843,4 @@ Claude Code creates this file with these headings and fills them from the finish
 | 1.2 | 2026-09-29 | Recorded the owner's decisions: GPLv3, repo `finance-excel-labs` |
 | 1.3 | 2026-09-29 | Milestone 0 resolutions accepted by the owner (details in `docs/OPEN_ISSUES.md` #1–#12): hand-authored config moves to `src/config/labs.config.ts` and `src/data/` becomes generated-only, with `notice.json` and `manifest.json` added (§4.2, §4.5, §9.2); `workbook.json` keeps `{date}` values, converted to serials at engine load (§4.3); experiment `changes` convert only full `YYYY-MM-DD` strings, and `expect: null` means empty (§4.4); Appendix D/E JSON extraction is scoped to its own section (§4.2); local sub-path builds use `npm run build:pages` via `cross-env` (§17.3); the workflow uses Node 24 from `.nvmrc`, current action majors, job-scoped Pages permissions, and never cancels a `main` deploy (§17.4) |
 | 1.4 | 2026-09-30 | Milestone 1: recorded which HyperFormula gaps are real, added the `INDEX` and `TEXT` overrides to the plugin table (§7.2, §7.4), and added the `verification:write` step to the workflow (§17.4) |
+| 1.5 | 2026-09-30 | Milestone 2 kickoff, owner-approved (`docs/OPEN_ISSUES.md` #20–#24): the grid requirements are split across milestones. GR-7, GR-12, LS-2, and LS-3 move to M3; GR-8, GR-9, and GR-10 move to M4; Zustand is deferred to M5 (§9.1, §12). Also recorded: cell-link rules for bare and `$` references (#20), tiers hand-authored from Part 0.3 (#21), disabled "coming soon" mode tabs (#22), and an axe-core check in e2e (#24) |

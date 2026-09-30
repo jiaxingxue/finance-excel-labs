@@ -4,6 +4,7 @@ import { createHashRouter } from 'react-router';
 import { Layout } from './components/Layout.tsx';
 import { About } from './routes/About.tsx';
 import { Home } from './routes/Home.tsx';
+import { LabRoute } from './routes/LabRoute.tsx';
 import { NotFound } from './routes/NotFound.tsx';
 import { RouteError } from './routes/RouteError.tsx';
 
@@ -13,6 +14,10 @@ export const router = createHashRouter([
     errorElement: <RouteError />,
     children: [
       { index: true, element: <Home /> },
+      {
+        path: 'lab/:n',
+        element: <LabRoute />,
+      },
       { path: 'about', element: <About /> },
       { path: '*', element: <NotFound /> },
     ],

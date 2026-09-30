@@ -1,3 +1,4 @@
+import { VerificationNotice } from '../components/notice/VerificationNotice.tsx';
 import { useDocumentTitle } from '../components/useDocumentTitle.ts';
 import styles from './Page.module.css';
 
@@ -8,14 +9,18 @@ export function About() {
     <>
       <h1 className={styles.title}>About</h1>
       <p className={styles.lead}>
-        A browser-based learning app for FP&amp;A and accounting. Formulas will run in an
+        A browser-based learning app for FP&amp;A and accounting. Formulas run in an
         Excel-compatible engine in your browser, not in Microsoft Excel. This project has no
-        affiliation with Microsoft.
+        affiliation with Microsoft or Handsontable.
       </p>
+
+      <h2 className={styles.heading}>Verification</h2>
+      <VerificationNotice open />
 
       <h2 className={styles.heading}>License</h2>
       <p>
-        Code and lesson content are licensed under the GNU General Public License v3. See the{' '}
+        Code and lesson content are licensed under the GNU General Public License v3. Formula
+        engine: HyperFormula (GPLv3) by Handsontable. See the{' '}
         <a href="https://github.com/jiaxingxue/finance-excel-labs/blob/main/LICENSE">LICENSE</a> and{' '}
         <a href="https://github.com/jiaxingxue/finance-excel-labs/blob/main/THIRD_PARTY_NOTICES.md">
           third-party notices

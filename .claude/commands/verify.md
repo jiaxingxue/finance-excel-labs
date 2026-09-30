@@ -8,7 +8,7 @@ Steps, in order:
 1. `npm run extract -- --check`: generated data must match the Labs document.
 2. Cross-check the generated data against `reference/golden/`: 15 sheets whose cells deep-equal `spec.json`, 277 assertions, 12 experiments. Report any difference.
 3. `npm run lint` and `npm run typecheck`.
-4. `npm test`: report the conformance numbers explicitly as "assertions X/277, experiments Y/12", plus the total unit-test count.
+4. `npm test -- --reporter=default --reporter=json --outputFile=reports/vitest.json`, then `npm run verification:write`, as CI does (the e2e suite checks the `verification.json` this writes): report the conformance numbers explicitly as "assertions X/277, experiments Y/12", plus the total unit-test count.
 5. `npm run build:pages` (builds with `BASE_PATH=/finance-excel-labs/` via cross-env; works in PowerShell and Git Bash): report bundle sizes and flag the initial JS if it exceeds 600 KB gzipped (PRD §8).
 6. `npm run test:e2e` (only if steps 1–5 pass).
 

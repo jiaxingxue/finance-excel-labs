@@ -1,0 +1,347 @@
+/* Lab workspace layout (PRD §5.2).
+   Desktop ≥ 1200px: lesson 30% | sheet 45% | checks + inspector 25%.
+   Tablet 768–1199px: the lesson is a drawer; sheet on top, checks and inspector below.
+   Phone < 768px: one panel at a time, chosen with [Lesson | Sheet | Checks]. */
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  line-height: 1.25;
+}
+
+.labPicker select {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.mode {
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.mode[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font-weight: 600;
+}
+
+.mode:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  cursor: not-allowed;
+}
+
+.soon {
+  font-size: 0.75rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.progress {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.button {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  border-color: var(--color-accent);
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 30fr) minmax(0, 45fr) minmax(0, 25fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'lesson sheet checks'
+    'lesson sheet inspector';
+  gap: var(--space-3);
+  height: max(32rem, calc(100dvh - 12rem));
+}
+
+.lesson {
+  grid-area: lesson;
+  min-height: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  overflow: auto;
+}
+
+.sheet {
+  grid-area: sheet;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: 0;
+}
+
+.checks {
+  grid-area: checks;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.checks > * {
+  flex: 1;
+}
+
+.inspector {
+  grid-area: inspector;
+  display: flex;
+  flex-direction: column;
+  max-height: 20rem;
+  min-height: 0;
+}
+
+.loading {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.status {
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border-left: 3px solid var(--color-fail);
+  background: var(--color-surface);
+  font-size: 0.88rem;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.note {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.lessonOnly {
+  max-width: 48rem;
+}
+
+.lessonOnly .lesson {
+  overflow: visible;
+}
+
+.phoneTabs,
+.lessonToggle,
+.drawerClose,
+.scrim {
+  display: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Tablet: the lesson becomes a drawer. */
+@media (max-width: 1199px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(22rem, 62dvh) auto;
+    grid-template-areas:
+      'sheet sheet'
+      'checks inspector';
+    height: auto;
+  }
+
+  .lessonToggle {
+    display: inline-block;
+  }
+
+  .body .lesson {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 20;
+    width: min(34rem, 92vw);
+    border-radius: 0;
+    box-shadow: 0 0 24px rgb(0 0 0 / 25%);
+    visibility: hidden;
+    transform: translateX(-105%);
+    transition:
+      transform 200ms ease,
+      visibility 200ms;
+  }
+
+  .body .lesson[data-drawer='open'] {
+    visibility: visible;
+    transform: none;
+  }
+
+  .drawerClose {
+    display: block;
+    margin: 0 0 var(--space-3) auto;
+  }
+
+  .scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    background: rgb(0 0 0 / 30%);
+  }
+
+  .checks,
+  .inspector {
+    max-height: 24rem;
+  }
+}
+
+/* Phone: one panel at a time. */
+@media (max-width: 767px) {
+  .phoneTabs {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .phoneTabs button {
+    flex: 1;
+    padding: 0.45rem 0;
+    border: 0;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .phoneTabs button + button {
+    border-left: 1px solid var(--color-border);
+  }
+
+  .phoneTabs button[aria-pressed='true'] {
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    font-weight: 600;
+  }
+
+  .lessonToggle,
+  .scrim,
+  .drawerClose {
+    display: none;
+  }
+
+  .modes {
+    flex-wrap: nowrap;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .mode {
+    flex: none;
+  }
+
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: none;
+    height: auto;
+  }
+
+  .body > * {
+    grid-area: auto;
+  }
+
+  .body .lesson {
+    position: static;
+    width: auto;
+    box-shadow: none;
+    border-radius: var(--radius);
+    visibility: visible;
+    transform: none;
+    transition: none;
+    overflow: visible;
+  }
+
+  .sheet {
+    height: 70dvh;
+  }
+
+  .checks,
+  .inspector {
+    max-height: none;
+  }
+
+  .body[data-tab='lesson'] > :not(.lesson),
+  .body[data-tab='sheet'] > :not(.sheet, .inspector),
+  .body[data-tab='checks'] > :not(.checks) {
+    display: none;
+  }
+}

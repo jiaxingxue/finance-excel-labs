@@ -35,6 +35,7 @@ Interactive, auto-graded Excel labs for FP&A and accounting, running an Excel-co
 | Unit + conformance tests | `npm test` |
 | Pre-commit gate | `npm run check` (lint + typecheck + test; works in any shell) |
 | E2E tests | `npm run build:pages` then `npm run test:e2e` (one-time: `npx playwright install chromium`) |
+| Milestone screenshots | `npm run build:pages` then `npm run screenshots:m2` (writes `docs/milestones/m2/`) |
 | Lint / types / format | `npm run lint` / `npm run typecheck` / `npm run format:check` |
 | Production build | `npm run build` (base `/`) or `npm run build:pages` (base `/finance-excel-labs/`, mimics Pages) |
 | Third-party notices | `npm run notices` (`-- --check` fails if stale); run after any dependency change |
@@ -50,4 +51,6 @@ The owner uses PowerShell on Windows; CI runs on Linux. Put any environment vari
 - `tests/*.test.ts` (Vitest) · `tests/e2e/*.spec.ts` (Playwright, against the built site under `/finance-excel-labs/`)
 
 ## Lessons learned
+- Sheet names are case-insensitive in HyperFormula and Excel (`Gl!E2` is `GL!E2`). Use a truly absent name such as `Ledger!` to test unknown-sheet handling.
+- UI code imports `src/engine/address.ts` and `src/engine/types.ts`, never `src/engine/index.ts`, which would pull HyperFormula into an eagerly loaded chunk. Only `src/workspace/engineBundle.ts` imports the engine (PRD §8: the lesson renders first).
 <!-- Add a one-line rule here whenever the same mistake happens twice. -->

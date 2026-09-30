@@ -1,7 +1,8 @@
 // Value comparison rules for grading (PRD §4.4).
 
 import type { Assertion } from '../content/types.ts';
-import { isoDateToSerial, type CellValue } from '../engine/index.ts';
+import { isoDateToSerial } from '../engine/address.ts';
+import type { CellValue } from '../engine/types.ts';
 
 /** Assertion numbers pass if |actual − expected| ≤ max(tolerance, |expected| × 1e-12). */
 export function assertionPasses(actual: CellValue, assertion: Assertion): boolean {
