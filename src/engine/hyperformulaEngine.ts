@@ -15,7 +15,14 @@ import {
 import type { CellSpec, SheetSpec, WorkbookSpec } from '../content/types.ts';
 import { isoDateToSerial, parseA1, referencedSheets, serialToIsoDate, toA1 } from './address.ts';
 import { registerPlugins } from './plugins/index.ts';
-import type { CellRef, CellValue, ChangedCell, FormulaEngine, RangeRef } from './types.ts';
+import type {
+  CellEntry,
+  CellRef,
+  CellValue,
+  ChangedCell,
+  FormulaEngine,
+  RangeRef,
+} from './types.ts';
 
 // HyperFormula is licensed under GPLv3 for this project (docs/DECISIONS.md D1).
 const CONFIG: Partial<ConfigParams> = {
@@ -79,16 +86,21 @@ export class HyperFormulaEngine implements FormulaEngine {
   }
 
   setCell(ref: CellRef, content: string | number | boolean | null): ChangedCell[] {
-    let raw: RawCellContent;
-    if (content === null || content === '') {
-      raw = null;
-    } else if (typeof content === 'string' && content.startsWith('=')) {
-      assertKnownSheets(content, this.sheetNames(), `${ref.sheet}!${ref.cell}`);
-      raw = content;
-    } else {
-      raw = typeof content === 'string' ? TEXT_PREFIX + content : content;
-    }
-    return this.mapChanges(this.engine.setCellContents(this.address(ref), raw));
+    return this.mapChanges(
+      this.engine.setCellContents(this.address(ref), this.toRaw(ref, content)),
+    );
+  }
+
+  setCells(entries: CellEntry[]): ChangedCell[] {
+    // Convert (and validate) everything first, so a bad entry changes nothing.
+    const writes = entries.map(
+      ({ ref, content }) => [this.address(ref), this.toRaw(ref, content)] as const,
+    );
+    return this.mapChanges(
+      this.engine.batch(() => {
+        for (const [address, raw] of writes) this.engine.setCellContents(address, raw);
+      }),
+    );
   }
 
   getValue(ref: CellRef): CellValue {
@@ -97,6 +109,17 @@ export class HyperFormulaEngine implements FormulaEngine {
 
   getFormula(ref: CellRef): string | null {
     return this.engine.getCellFormula(this.address(ref)) ?? null;
+  }
+
+  evaluate(formula: string, sheet: string): CellValue {
+    try {
+      assertKnownSheets(formula, this.sheetNames(), 'rule');
+      const value = this.engine.calculateFormula(formula, this.sheetId(sheet));
+      // A formula that returns a range yields an array; a rule needs one value.
+      return Array.isArray(value) ? { error: '#VALUE!' } : toCellValue(value);
+    } catch (error) {
+      return { error: '#ERROR!', message: error instanceof Error ? error.message : String(error) };
+    }
   }
 
   fill(source: RangeRef, target: RangeRef): ChangedCell[] {
@@ -173,6 +196,16 @@ export class HyperFormulaEngine implements FormulaEngine {
   private get engine(): HyperFormula {
     if (!this.hf) throw new Error('No workbook loaded');
     return this.hf;
+  }
+
+  /** Content for setCell/setCells: literal text gets the text prefix; formulas are checked. */
+  private toRaw(ref: CellRef, content: string | number | boolean | null): RawCellContent {
+    if (content === null || content === '') return null;
+    if (typeof content === 'string' && content.startsWith('=')) {
+      assertKnownSheets(content, this.sheetNames(), `${ref.sheet}!${ref.cell}`);
+      return content;
+    }
+    return typeof content === 'string' ? TEXT_PREFIX + content : content;
   }
 
   private toRawContent(sheet: string, address: string, cell: CellSpec): RawCellContent {

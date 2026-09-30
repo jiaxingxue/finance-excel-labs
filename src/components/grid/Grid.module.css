@@ -102,6 +102,37 @@
   background: var(--color-input-tint);
 }
 
+/* GR-12 conditional formats. They cover the input tint; the selection still shows over them.
+   Each rule's meaning is also in the cell text (the status or number), never color alone. */
+.redFill {
+  background: var(--color-cf-red);
+}
+
+.orangeFill {
+  background: var(--color-cf-orange);
+}
+
+.yellowFill {
+  background: var(--color-cf-yellow);
+}
+
+.greenFill {
+  background: var(--color-cf-green);
+}
+
+/* Two-color scale: --cf-scale is 0% at the lowest value and 100% at the highest. */
+.scale {
+  background: color-mix(
+    in oklab,
+    var(--color-cf-scale-high) var(--cf-scale),
+    var(--color-cf-scale-low)
+  );
+}
+
+.bold {
+  font-weight: 700;
+}
+
 .inRange {
   background: var(--color-range);
 }

@@ -25,6 +25,11 @@ export interface ErrorValue {
 /** `null` is an empty cell. */
 export type CellValue = number | string | boolean | ErrorValue | null;
 
+export interface CellEntry {
+  ref: CellRef;
+  content: string | number | boolean | null;
+}
+
 export interface ChangedCell {
   ref: CellRef;
   value: CellValue;
@@ -39,8 +44,16 @@ export interface FormulaEngine {
    * Throws if a formula refers to a sheet that doesn't exist.
    */
   setCell(ref: CellRef, content: string | number | boolean | null): ChangedCell[];
+  /** Several `setCell`s with one recalculation and one undo step. All or nothing. */
+  setCells(entries: CellEntry[]): ChangedCell[];
   getValue(ref: CellRef): CellValue;
   getFormula(ref: CellRef): string | null;
+  /**
+   * Evaluates a formula that isn't stored in any cell, on the given sheet, without changing the
+   * workbook (used for conditional-format rules, PRD §9.3). Relative references are read as-is.
+   * A formula that can't be parsed returns an error value instead of throwing.
+   */
+  evaluate(formula: string, sheet: string): CellValue;
   /** Excel "fill": repeats `source` across `target`, adjusting relative references. One undo step. */
   fill(source: RangeRef, target: RangeRef): ChangedCell[];
   /** Cells and ranges referenced directly by the cell's formula. */

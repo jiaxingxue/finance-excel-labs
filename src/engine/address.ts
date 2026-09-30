@@ -76,3 +76,17 @@ export function isoDateToSerial(iso: string): number | undefined {
 export function serialToIsoDate(serial: number): string {
   return new Date(EPOCH_MS + Math.floor(serial) * DAY_MS).toISOString().slice(0, 10);
 }
+
+/** The addresses in a range, row by row: `B5:C6` → `[['B5', 'C5'], ['B6', 'C6']]`. */
+export function rangeAddresses(start: string, end: string): string[][] {
+  const [a, b] = [parseA1(start), parseA1(end)];
+  const rows: string[][] = [];
+  for (let row = Math.min(a.row, b.row); row <= Math.max(a.row, b.row); row++) {
+    const cells: string[] = [];
+    for (let col = Math.min(a.col, b.col); col <= Math.max(a.col, b.col); col++) {
+      cells.push(toA1({ row, col }));
+    }
+    rows.push(cells);
+  }
+  return rows;
+}

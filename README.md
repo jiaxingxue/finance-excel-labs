@@ -1,6 +1,6 @@
 # Excel Labs for Financial Analysis
 
-> 🚧 **In development.** Live at **https://jiaxingxue.github.io/finance-excel-labs/**. Explore mode works (lesson, live grid, checks); Build, What-if, and Challenge modes arrive in later milestones.
+> 🚧 **In development.** Live at **https://jiaxingxue.github.io/finance-excel-labs/**. Explore mode (lesson, live grid, checks) and What-if mode (input controls with live recalculation) work; Challenge and Build modes are coming next.
 
 Interactive, auto-graded Excel labs for FP&A and accounting: budget vs. actual, price–volume–mix, bank reconciliation, AR aging, forecasting, and driver-based scenarios. Formulas run live in the browser in an Excel-compatible engine, and every result is checked against 277 independently verified expected values.
 

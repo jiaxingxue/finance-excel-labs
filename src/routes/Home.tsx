@@ -17,9 +17,10 @@ export function Home() {
       </p>
 
       <p className={styles.notice} role="status">
-        <strong>In development.</strong> Explore mode is live: open a lab to read the lesson next to
-        the live workbook and its checks. Build, What-if, and Challenge modes arrive in later
-        milestones.
+        <strong>In development.</strong> The labs are interactive: open one to read the lesson next
+        to the live workbook and its checks (Explore mode), or move its inputs with sliders and
+        dropdowns and watch the results recalculate (What-if mode). Challenge and Build modes are
+        coming next.
       </p>
 
       <dl className={styles.stats} aria-label="Content loaded from the Labs document">
