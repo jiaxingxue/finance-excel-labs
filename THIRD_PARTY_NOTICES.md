@@ -13,11 +13,17 @@ These packages (and their dependencies) are included in the published site.
 | Package | Version | License |
 |---|---|---|
 | [@remix-run/route-pattern](https://www.npmjs.com/package/@remix-run/route-pattern) | 0.22.1 | MIT |
+| [chevrotain](https://www.npmjs.com/package/chevrotain) | 6.5.0 | Apache-2.0 |
 | [cookie-es](https://www.npmjs.com/package/cookie-es) | 3.1.1 | MIT |
+| [frac](https://www.npmjs.com/package/frac) | 1.1.2 | Apache-2.0 |
+| [hyperformula](https://www.npmjs.com/package/hyperformula) | 3.4.0 | GPL-3.0-only |
 | [react](https://www.npmjs.com/package/react) | 19.3.0 | MIT |
 | [react-dom](https://www.npmjs.com/package/react-dom) | 19.3.0 | MIT |
 | [react-router](https://www.npmjs.com/package/react-router) | 8.4.0 | MIT |
+| [regexp-to-ast](https://www.npmjs.com/package/regexp-to-ast) | 0.4.0 | MIT |
 | [scheduler](https://www.npmjs.com/package/scheduler) | 0.28.0 | MIT |
+| [ssf](https://www.npmjs.com/package/ssf) | 0.11.2 | Apache-2.0 |
+| [tiny-emitter](https://www.npmjs.com/package/tiny-emitter) | 2.1.0 | MIT |
 
 ## Development tools (not distributed)
 

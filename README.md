@@ -14,7 +14,7 @@ Interactive, auto-graded Excel labs for FP&A and accounting: budget vs. actual, 
 
 ## How correctness will be guaranteed
 - **Independent expected values:** 277 expected values and 12 what-if experiments were computed outside this app (see [`reference/`](reference/README.md)).
-- **A deploy gate:** CI will block deployment unless every one of them is reproduced.
+- **A deploy gate:** the in-browser engine ([HyperFormula](https://github.com/handsontable/hyperformula), plus plugins for the functions it lacks) reproduces all 277 values and all 12 experiments in CI, and a deploy is blocked unless every one passes. The conformance suite is [`tests/conformance.test.ts`](tests/conformance.test.ts).
 - **Grading checks results, not formula text,** and re-tests answers under changed inputs to reject hard-coding.
 
 ## Run locally
@@ -32,14 +32,14 @@ npm run check            # lint + typecheck + unit tests
 | Unit tests + golden cross-check | `npm test` |
 | Build as deployed on GitHub Pages | `npm run build:pages` (base path `/finance-excel-labs/`) |
 | Preview that build | `npm run preview:pages` → http://localhost:4173/finance-excel-labs/ |
-| End-to-end tests | `npx playwright install chromium` (once), then `npm run build:pages` and `npm run test:e2e` |
+| End-to-end tests | `npx playwright install chromium` (once), then `npm run build:pages` and `npm run test:e2e` (it refuses a build made without the `/finance-excel-labs/` base) |
 | Format | `npm run format` / `npm run format:check` |
 | Third-party notices | `npm run notices` (after any dependency change) |
 
 How content flows from the Labs document into the app: [docs/CONTENT_PIPELINE.md](docs/CONTENT_PIPELINE.md).
 
 ## Deploy
-Every push to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml): content sync check, lint, format, typecheck, unit tests, build, and end-to-end tests. The site is published to GitHub Pages **only if all of them pass**. Pull requests run the same checks without deploying.
+Every push to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml): content sync check, lint, format, typecheck, unit and conformance tests, build, and end-to-end tests. The conformance results are published with the site as `verification.json`. The site is published to GitHub Pages **only if all of them pass**. Pull requests run the same checks without deploying.
 
 One-time setup (owner): repository **Settings → Pages → Build and deployment → Source → GitHub Actions**.
 

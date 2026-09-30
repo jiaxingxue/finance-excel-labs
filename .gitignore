@@ -7,6 +7,9 @@ playwright-report/
 test-results/
 *.tsbuildinfo
 
+# Written in CI from the conformance results (npm run verification:write)
+public/verification.json
+
 # env and secrets
 .env
 .env.*

@@ -37,7 +37,8 @@ jobs:
       - run: npm run typecheck
       - name: Unit + golden cross-check tests
         run: npm test -- --reporter=default --reporter=json --outputFile=reports/vitest.json
-      # M1 adds: npm run verification:write (reports/vitest.json → public/verification.json)
+      - name: Write public/verification.json from the conformance results
+        run: npm run verification:write
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - name: E2E tests against the production build under BASE_PATH
